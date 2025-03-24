@@ -76,7 +76,7 @@ File(rootProject.rootDir.path + searchingPath).listFiles()
                     languageVersion.set(JavaLanguageVersion.of(11))
                 }
             )
-            main = "-jar"
+            mainClass = "-jar"
             args = listOf(
                 "-jar",
                 "--add-opens", "java.base/jdk.internal.misc=ALL-UNNAMED",
