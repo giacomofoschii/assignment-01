@@ -25,14 +25,18 @@ tasks.getByName<Test>("test") {
     useJUnitPlatform()
 }
 
-/*java {
+/*
+java {
     toolchain {
-        languageVersion.set(JavaLanguageVersion.of(17))
+        languageVersion.set(JavaLanguageVersion.of(21))
         vendor.set(JvmVendorSpec.ADOPTIUM)
     }
 }
 */
 
+//tasks.compileJava {
+//    options.release.set(8)
+//}
 // Utility function for verification through JPF
 
 val verificationGroup = "Verification"
@@ -84,7 +88,7 @@ File(rootProject.rootDir.path + searchingPath).listFiles()
             )
             //args = listOf("./jpf-runner/build/RunJPF.jar", ".${searchingPath}" + file.name)
         }
-        val capitalizedName = it.nameWithoutExtension.capitalize()
+        val capitalizedName = it.nameWithoutExtension.replaceFirstChar { it.uppercaseChar() }
         val jpfVerification by launchVerificationTask("run${capitalizedName}Verify", it)
         jpfVerification.dependsOn(tasks.getByName("compileJava"))
         verifyAll.dependsOn(jpfVerification)

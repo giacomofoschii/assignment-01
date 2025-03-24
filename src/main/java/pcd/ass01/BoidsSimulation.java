@@ -1,5 +1,7 @@
 package pcd.ass01;
 
+import java.util.Random;
+
 public class BoidsSimulation {
 
 	final static int N_BOIDS = 1500;
@@ -25,7 +27,8 @@ public class BoidsSimulation {
     					ENVIRONMENT_WIDTH, ENVIRONMENT_HEIGHT,
     					MAX_SPEED,
     					PERCEPTION_RADIUS,
-    					AVOID_RADIUS); 
+    					AVOID_RADIUS,
+						new Random());
     	var sim = new BoidsSimulator(model);
     	var view = new BoidsView(model, SCREEN_WIDTH, SCREEN_HEIGHT);
     	sim.attachView(view);
