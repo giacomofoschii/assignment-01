@@ -12,13 +12,18 @@ public class BoidsView implements ChangeListener {
 	private JFrame frame;
 	private BoidsPanel boidsPanel;
 	private JSlider cohesionSlider, separationSlider, alignmentSlider;
+	private JButton startStopbutton;
+	private JTextField boidsNumberField;
+	private boolean isRunning;
 	private BoidsModel model;
+	private BoidsSimulator simulator;
 	private int width, height;
 	
 	public BoidsView(BoidsModel model, int width, int height) {
 		this.model = model;
 		this.width = width;
 		this.height = height;
+		this.isRunning = false;
 		
 		frame = new JFrame("Boids Simulation");
         frame.setSize(width, height);
@@ -30,6 +35,42 @@ public class BoidsView implements ChangeListener {
 
         boidsPanel = new BoidsPanel(this, model);
 		cp.add(BorderLayout.CENTER, boidsPanel);
+
+		JPanel controlPanel = new JPanel();
+
+		startStopbutton = new JButton("Start");
+		boidsNumberField = new JTextField(10);
+
+		startStopbutton.addActionListener(e -> {
+            /*if(isRunning) {
+                //simulator.stopSimulation();
+                startStopbutton.setText("Start");
+            } else {
+                simulator.runSimulation();
+                startStopbutton.setText("Stop");
+            }*/
+            isRunning = !isRunning;
+        });
+
+		boidsNumberField = new JTextField("1500", 10);
+		boidsNumberField.addActionListener(e -> {
+            try {
+				int nBoids = Integer.parseInt(boidsNumberField.getText());
+				if(nBoids > 0) {
+					model.setBoidsNumber(nBoids);
+				} else {
+					JOptionPane.showMessageDialog(frame, "Boids number must be positive", "Input Error", JOptionPane.ERROR_MESSAGE);
+				}
+			} catch (NumberFormatException ex) {
+				JOptionPane.showMessageDialog(frame, "Insert a number without letters or symbols" , "Input Error", JOptionPane.ERROR_MESSAGE);
+			}
+        });
+
+		controlPanel.add(startStopbutton);
+		controlPanel.add(new JLabel("Number of boids:"));
+		controlPanel.add(boidsNumberField);
+
+		cp.add(BorderLayout.NORTH, controlPanel);
 
         JPanel slidersPanel = new JPanel();
         
@@ -92,6 +133,10 @@ public class BoidsView implements ChangeListener {
 
 	public int getHeight() {
 		return height;
+	}
+
+	public void setSimulator(BoidsSimulator simulator) {
+		this.simulator = simulator;
 	}
 
 }
