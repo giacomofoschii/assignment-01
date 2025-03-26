@@ -111,11 +111,11 @@ public class BoidsModel {
     }
 
     public synchronized void setBoidsNumber(int nBoids) {
-        /*boids.clear();
+        boids.clear();
         for (int i = 0; i < nBoids; i++) {
             P2d pos = new P2d(-width/2 + generator.nextDouble() * width, -height/2 + generator.nextDouble() * height);
             V2d vel = new V2d(generator.nextDouble() * maxSpeed/2 - maxSpeed/4, generator.nextDouble() * maxSpeed/2 - maxSpeed/4);
             boids.add(new Boid(pos, vel));
-        }*/
+        }
     }
 }

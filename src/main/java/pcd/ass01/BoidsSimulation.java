@@ -31,6 +31,7 @@ public class BoidsSimulation {
 						new Random());
     	var sim = new BoidsSimulator(model);
     	var view = new BoidsView(model, SCREEN_WIDTH, SCREEN_HEIGHT);
+		view.setSimulator(sim);
     	sim.attachView(view);
     	sim.runSimulation();
     }

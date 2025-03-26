@@ -12,7 +12,7 @@ public class BoidsView implements ChangeListener {
 	private JFrame frame;
 	private BoidsPanel boidsPanel;
 	private JSlider cohesionSlider, separationSlider, alignmentSlider;
-	private JButton startStopbutton;
+	private JButton stopButton, pauseButton;
 	private JTextField boidsNumberField;
 	private boolean isRunning;
 	private BoidsModel model;
@@ -38,42 +38,54 @@ public class BoidsView implements ChangeListener {
 
 		JPanel controlPanel = new JPanel();
 
-		startStopbutton = new JButton("Start");
+		pauseButton = new JButton("Pause");
+		stopButton = new JButton("Stop");
 		boidsNumberField = new JTextField(10);
 
-		startStopbutton.addActionListener(e -> {
-            /*if(isRunning) {
-                //simulator.stopSimulation();
-                startStopbutton.setText("Start");
-            } else {
-                simulator.runSimulation();
-                startStopbutton.setText("Stop");
-            }*/
-            isRunning = !isRunning;
+		stopButton.addActionListener(e -> {
+			//sim.stopSimulation();
         });
+
+		pauseButton.addActionListener(e -> {
+			if (isRunning) {
+				//sim.pauseSimulation();
+				pauseButton.setText("Resume");
+			} else {
+				//sim.resumeSimulation();
+				pauseButton.setText("Pause");
+			}
+			isRunning = !isRunning;
+		});
 
 		boidsNumberField = new JTextField("1500", 10);
 		boidsNumberField.addActionListener(e -> {
             try {
 				int nBoids = Integer.parseInt(boidsNumberField.getText());
-				if(nBoids > 0) {
+				if (nBoids > 0) {
 					model.setBoidsNumber(nBoids);
 				} else {
-					JOptionPane.showMessageDialog(frame, "Boids number must be positive", "Input Error", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(frame,
+							"Boids number must be positive",
+							"Input Error",
+							JOptionPane.ERROR_MESSAGE);
 				}
 			} catch (NumberFormatException ex) {
-				JOptionPane.showMessageDialog(frame, "Insert a number without letters or symbols" , "Input Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(frame,
+						"Insert a number without letters or symbols" ,
+						"Input Error",
+						JOptionPane.ERROR_MESSAGE);
 			}
         });
 
-		controlPanel.add(startStopbutton);
+		controlPanel.add(stopButton);
+		controlPanel.add(pauseButton);
 		controlPanel.add(new JLabel("Number of boids:"));
 		controlPanel.add(boidsNumberField);
 
 		cp.add(BorderLayout.NORTH, controlPanel);
 
         JPanel slidersPanel = new JPanel();
-        
+
         cohesionSlider = makeSlider();
         separationSlider = makeSlider();
         alignmentSlider = makeSlider();
