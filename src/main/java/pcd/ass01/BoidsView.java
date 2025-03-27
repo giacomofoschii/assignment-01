@@ -13,7 +13,6 @@ public class BoidsView implements ChangeListener {
 	private BoidsPanel boidsPanel;
 	private JSlider cohesionSlider, separationSlider, alignmentSlider;
 	private JButton stopButton, pauseButton;
-	private JTextField boidsNumberField;
 	private boolean isRunning;
 	private BoidsModel model;
 	private BoidsSimulator simulator;
@@ -95,7 +94,7 @@ public class BoidsView implements ChangeListener {
 				int nBoids = Integer.parseInt(input);
 				if (nBoids > 0) {
 					model.setBoidsNumber(nBoids);
-					simulator = new BoidsSimulator(model);
+					this.simulator = new BoidsSimulator(model);
 					simulator.attachView(this);
 					simulator.runSimulation();
 					starting = true;
@@ -151,10 +150,6 @@ public class BoidsView implements ChangeListener {
 
 	public int getHeight() {
 		return height;
-	}
-
-	public void setSimulator(BoidsSimulator simulator) {
-		this.simulator = simulator;
 	}
 
 }

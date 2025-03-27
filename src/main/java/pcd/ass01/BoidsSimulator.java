@@ -24,6 +24,12 @@ public class BoidsSimulator {
         this.threads = new LinkedList<>();
         this.administrator = new Administrator(numThreads);
         this.barrier = new CyclicBarrier(numThreads);
+
+
+        List<Boid> boids = model.getBoids();
+        for (int i = 0; i < numThreads; i++) {
+            threads.add(new BoidThread(getThreadPool(i, boids), model, barrier, administrator));
+        }
     }
 
     public void attachView(BoidsView view) {
@@ -31,7 +37,9 @@ public class BoidsSimulator {
     }
       
     public void runSimulation() {
-        initializingThreads();
+        for(Thread thread : threads) {
+            thread.start();
+        }
 
         while (running) {
             if(paused) {
@@ -63,16 +71,6 @@ public class BoidsSimulator {
         }
     }
 
-    private void initializingThreads() {
-        List<Boid> boids = model.getBoids();
-        for (int i = 0; i < numThreads; i++) {
-            threads.add(new BoidThread(getThreadPool(i, boids), model, barrier, administrator));
-        }
-        for(Thread thread : threads) {
-            thread.start();
-        }
-    }
-
     private List<Boid> getThreadPool(int threadIndex, List<Boid> boids) {
         int poolSize = boids.size() / numThreads;
         int start = threadIndex * poolSize;
@@ -87,7 +85,7 @@ public class BoidsSimulator {
      public synchronized void resumeSimulation() {
         paused = false;
         notifyAll();
-    }
+     }
 
     public synchronized void stopSimulation() {
         running = false;
