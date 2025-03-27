@@ -1,5 +1,7 @@
 package pcd.ass01.multithreading;
 
+import pcd.ass01.MockGenerator;
+
 public class JPFBoidsSimulation {
 
     final static int N_BOIDS = 1500;
