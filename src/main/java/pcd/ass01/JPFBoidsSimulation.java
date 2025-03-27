@@ -19,7 +19,6 @@ public class JPFBoidsSimulation {
 
     public static void main(String[] args) {
         var model = new BoidsModel(
-                        N_BOIDS,
                         SEPARATION_WEIGHT, ALIGNMENT_WEIGHT, COHESION_WEIGHT,
                         ENVIRONMENT_WIDTH, ENVIRONMENT_HEIGHT,
                         MAX_SPEED, PERCEPTION_RADIUS, AVOID_RADIUS,

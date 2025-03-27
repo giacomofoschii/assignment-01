@@ -1,14 +1,16 @@
 package pcd.ass01;
 
-import java.util.Optional;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.*;
+import java.util.concurrent.CyclicBarrier;
 
 public class BoidsSimulator {
 
     private BoidsModel model;
     private Optional<BoidsView> view;
+    private final Administrator administrator;
+    private final CyclicBarrier barrier;
     private final int numThreads;
-    private final Thread[] threads;
+    private final Queue<BoidThread> threads;
     private volatile boolean running = true;
     private volatile boolean paused = false;
     
@@ -17,9 +19,16 @@ public class BoidsSimulator {
     
     public BoidsSimulator(BoidsModel model) {
         this.model = model;
-        view = Optional.empty();
+        this.view = Optional.empty();
         this.numThreads = Runtime.getRuntime().availableProcessors() + 1;
-        this.threads = new Thread[numThreads];
+        this.threads = new LinkedList<>();
+        this.administrator = new Administrator(numThreads);
+        this.barrier = new CyclicBarrier(numThreads);
+
+        List<Boid> boids = model.getBoids();
+        for (int i = 0; i < numThreads; i++) {
+            threads.add(new BoidThread(getThreadPool(i, boids), model, barrier, administrator));
+        }
     }
 
     public void attachView(BoidsView view) {
@@ -27,37 +36,23 @@ public class BoidsSimulator {
     }
       
     public void runSimulation() {
-        for (int i = 0 ; i < numThreads; i++) {
-            final int threadIndex = i;
-            threads[i] = new Thread(() -> {
-                while (running) {
-                    if (paused) {
-                        synchronized (this) {
-                            try {
-                                this.wait();
-                            } catch (InterruptedException e) {
-                                Thread.currentThread().interrupt();
-                            }
-                        }
-                    }
-                    var boids = new CopyOnWriteArrayList<>(model.getBoids());
-                    int poolSize = boids.size() / numThreads;
-                    int start = threadIndex * poolSize;
-                    int end = (threadIndex == numThreads - 1) ? boids.size() : start + poolSize;
-
-                    for (int j = start; j < end; j++) {
-                        boids.get(j).updateVelocity(model);
-                    }
-                    for (int j = start; j < end; j++) {
-                        boids.get(j).updatePos(model);
-                    }
-                }
-            });
-            threads[i].start();
+        for(Thread thread : threads) {
+            thread.start();
         }
 
         while (running) {
+            if(paused) {
+                synchronized (this) {
+                    try {
+                        this.wait();
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                    }
+                }
+            }
             var t0 = System.currentTimeMillis();
+            administrator.waitThreads();
+
             if (view.isPresent()) {
                 view.get().update(framerate);
                 var t1 = System.currentTimeMillis();
@@ -74,21 +69,27 @@ public class BoidsSimulator {
                 }
             }
 
+            administrator.signalDone();
         }
     }
 
-    public void pauseSimulation() {
+    private List<Boid> getThreadPool(int threadIndex, List<Boid> boids) {
+        int poolSize = boids.size() / numThreads;
+        int start = threadIndex * poolSize;
+        int end = (threadIndex == numThreads - 1) ? boids.size() : start + poolSize;
+        return new ArrayList<>(boids.subList(start, end));
+    }
+
+    public synchronized void pauseSimulation() {
         paused=true;
     }
 
-    public void resumeSimulation() {
+     public synchronized void resumeSimulation() {
         paused = false;
-        synchronized (this) {
-            notifyAll();
-        }
+        notifyAll();
     }
 
-    public void stopSimulation() {
+    public synchronized void stopSimulation() {
         running = false;
         for (Thread thread : threads) {
             thread.interrupt();
