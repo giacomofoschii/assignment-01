@@ -15,6 +15,7 @@ public class BoidsModel {
     private final double maxSpeed;
     private final double perceptionRadius;
     private final double avoidRadius;
+    private final Random generator;
 
     public BoidsModel(int nboids,  
                       double initialSeparationWeight,
@@ -24,7 +25,8 @@ public class BoidsModel {
                       double height,
                       double maxSpeed,
                       double perceptionRadius,
-                      double avoidRadius){
+                      double avoidRadius,
+                      Random generator){
         separationWeight = initialSeparationWeight;
         alignmentWeight = initialAlignmentWeight;
         cohesionWeight = initialCohesionWeight;
@@ -33,6 +35,7 @@ public class BoidsModel {
         this.maxSpeed = maxSpeed;
         this.perceptionRadius = perceptionRadius;
         this.avoidRadius = avoidRadius;
+        this.generator = generator;
         
     	boids = new ArrayList<>();
         for (int i = 0; i < nboids; i++) {
@@ -105,5 +108,14 @@ public class BoidsModel {
 
     public synchronized double getPerceptionRadius() {
     	return perceptionRadius;
+    }
+
+    public void setBoidsNumber(int nBoids) {
+        boids.clear();
+        for(int i = 0; i < nBoids; i++){
+            P2d pos = new P2d(-width/2 + generator.nextDouble() * width, -height/2 + generator.nextDouble() * height);
+            V2d vel = new V2d(generator.nextDouble() * maxSpeed/2 - maxSpeed/4, generator.nextDouble() * maxSpeed/2 - maxSpeed/4);
+            boids.add(new Boid(pos, vel));
+        }
     }
 }

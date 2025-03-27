@@ -6,6 +6,8 @@ public class BoidsSimulator {
 
     private BoidsModel model;
     private Optional<BoidsView> view;
+    private boolean running = true;
+    private boolean paused = false;
     
     private static final int FRAMERATE = 25;
     private int framerate;
@@ -20,14 +22,14 @@ public class BoidsSimulator {
     }
       
     public void runSimulation() {
-    	while (true) {
+    	while (running) {
             var t0 = System.currentTimeMillis();
     		var boids = model.getBoids();
 
-            /*
+
     		for (Boid boid : boids) {
                 boid.update(model);
-            }*/
+            }
 
             /*
              * Improved correctness: first update velocities...
@@ -42,23 +44,37 @@ public class BoidsSimulator {
             for (Boid boid : boids) {
                 boid.updatePos(model);
             }
-            
-    		if (view.isPresent()) {
-            	view.get().update(framerate);
-            	var t1 = System.currentTimeMillis();
+
+            if (view.isPresent()) {
+                view.get().update(framerate);
+                var t1 = System.currentTimeMillis();
                 var dtElapsed = t1 - t0;
-                var framratePeriod = 1000/FRAMERATE;
-                
-                if (dtElapsed < framratePeriod) {		
-                	try {
-                		Thread.sleep(framratePeriod - dtElapsed);
-                	} catch (Exception ex) {}
-                	framerate = FRAMERATE;
+                var frameRatePeriod = 1000 / FRAMERATE;
+
+                if (dtElapsed < frameRatePeriod) {
+                    try {
+                        Thread.sleep(frameRatePeriod - dtElapsed);
+                    } catch (InterruptedException ex) {
+                        Thread.currentThread().interrupt();
+                    }
+                    framerate = FRAMERATE;
                 } else {
-                	framerate = (int) (1000/dtElapsed);
+                    framerate = (int) (1000 / dtElapsed);
                 }
-    		}
+            }
             
     	}
+    }
+
+    public void stopSimulation() {
+        running = false;
+    }
+
+    public void pauseSimulation() {
+        this.paused = true;
+    }
+
+    public void resumeSimulation() {
+        this.paused = false;
     }
 }
