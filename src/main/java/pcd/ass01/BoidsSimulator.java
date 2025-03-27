@@ -42,16 +42,7 @@ public class BoidsSimulator {
         }
     
         while (running) {
-            synchronized (this) {  // Aggiunto il blocco synchronized per wait()
-                while (paused) {   // Usato while invece di if per evitare spurious wakeups
-                    try {
-                        wait();
-                    } catch (InterruptedException e) {
-                        Thread.currentThread().interrupt(); // Ripristina stato di interruzione
-                    }
-                }
-            }
-    
+            
             var t0 = System.currentTimeMillis();
             administrator.waitThreads();
     
@@ -86,13 +77,13 @@ public class BoidsSimulator {
     }
 
     public synchronized void pauseSimulation() {
-        paused=true;
+        model.setPaused(true);
     }
-
+    
     public synchronized void resumeSimulation() {
-        paused = false;
-        notifyAll(); // Sveglia tutti i thread in attesa su wait()
+        model.setPaused(false);
     }
+    
     
 
     public synchronized void stopSimulation() {
