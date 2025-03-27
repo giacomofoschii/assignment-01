@@ -12,14 +12,18 @@ public class BoidsView implements ChangeListener {
 	private JFrame frame;
 	private BoidsPanel boidsPanel;
 	private JSlider cohesionSlider, separationSlider, alignmentSlider;
+	private JButton stopButton, pauseButton;
+	private boolean isRunning;
 	private BoidsModel model;
+	private BoidsSimulator simulator;
 	private int width, height;
 	
 	public BoidsView(BoidsModel model, int width, int height) {
 		this.model = model;
 		this.width = width;
 		this.height = height;
-		
+		this.isRunning = true;
+
 		frame = new JFrame("Boids Simulation");
         frame.setSize(width, height);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -31,24 +35,78 @@ public class BoidsView implements ChangeListener {
         boidsPanel = new BoidsPanel(this, model);
 		cp.add(BorderLayout.CENTER, boidsPanel);
 
+		JPanel controlPanel = new JPanel();
+
+		pauseButton = new JButton("Pause");
+		stopButton = new JButton("Stop");
+
+		stopButton.addActionListener(e -> {
+			simulator.stopSimulation();
+			frame.dispose();
+			System.exit(0);
+        });
+
+		pauseButton.addActionListener(e -> {
+			if (isRunning) {
+				simulator.pauseSimulation();
+				pauseButton.setText("Resume");
+			} else {
+				simulator.resumeSimulation();
+				pauseButton.setText("Pause");
+			}
+			isRunning = !isRunning;
+		});
+
+		controlPanel.add(stopButton);
+		controlPanel.add(pauseButton);
+
+		cp.add(BorderLayout.NORTH, controlPanel);
+
         JPanel slidersPanel = new JPanel();
-        
+
         cohesionSlider = makeSlider();
         separationSlider = makeSlider();
         alignmentSlider = makeSlider();
-        
+
         slidersPanel.add(new JLabel("Separation"));
         slidersPanel.add(separationSlider);
         slidersPanel.add(new JLabel("Alignment"));
         slidersPanel.add(alignmentSlider);
         slidersPanel.add(new JLabel("Cohesion"));
         slidersPanel.add(cohesionSlider);
-		        
+
 		cp.add(BorderLayout.SOUTH, slidersPanel);
 
-		frame.setContentPane(cp);	
-		
+		frame.setContentPane(cp);
+
         frame.setVisible(true);
+
+		boolean starting = false;
+		while(!starting) {
+			// Mostra il dialogo di input per il numero di boids
+			String input = JOptionPane.showInputDialog(frame, "Inserisci il numero di boids:",
+					"Numero di Boids", JOptionPane.QUESTION_MESSAGE);
+			if(input == null) {
+				frame.dispose();
+				System.exit(0);
+			}
+			try {
+				int nBoids = Integer.parseInt(input);
+				if (nBoids > 0) {
+					model.setBoidsNumber(nBoids);
+					this.simulator = new BoidsSimulator(model);
+					simulator.attachView(this);
+					simulator.runSimulation();
+					starting = true;
+				} else {
+					JOptionPane.showMessageDialog(frame, "Il numero di boids deve essere positivo",
+							"Errore di input", JOptionPane.ERROR_MESSAGE);
+				}
+			} catch (NumberFormatException ex) {
+				JOptionPane.showMessageDialog(frame, "Inserisci un numero valido",
+						"Errore di input", JOptionPane.ERROR_MESSAGE);
+			}
+		}
 	}
 
 	private JSlider makeSlider() {
