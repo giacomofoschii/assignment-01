@@ -42,12 +42,9 @@ public class BoidsSimulator {
 
         while (running) {
             if(paused) {
-                synchronized (this) {
-                    try {
-                        this.wait();
-                    } catch (InterruptedException e) {
-                        Thread.currentThread().interrupt();
-                    }
+                try {
+                    this.wait();
+                } catch (InterruptedException e) {
                 }
             }
             var t0 = System.currentTimeMillis();

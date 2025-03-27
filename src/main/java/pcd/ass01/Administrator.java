@@ -12,19 +12,19 @@ public class Administrator {
     public synchronized void threadDone() {
         try {
             waitingThreads++;
-            if (waitingThreads < numThreads) {
+            /*if (waitingThreads < numThreads) {
                 wait();
             } else {
                 notifyAll();
-            }
+            }*/
 
-            /*if (waitingThreads == numThreads) {
+            if (waitingThreads == numThreads) {
                notifyAll();
                }
 
             while (waitingThreads < numThreads) {
                 wait();
-            }*/
+            }
 
         } catch (InterruptedException e) {
         }
