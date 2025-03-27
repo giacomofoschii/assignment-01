@@ -20,14 +20,25 @@ public class BoidThread extends Thread{
 
     @Override
     public void run() {
-        while(true) {
+        while(!Thread.currentThread().isInterrupted()) {
+            synchronized (model) {
+                while(model.isPuased()) {
+                    try {
+                        model.wait();
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                    }
+                }
+            }
             for (Boid boid : boids) {
                 boid.updateVelocity(model);
             }
 
             try {
                 barrier.await(); //Wait all the boids to update their velocities
-            } catch (InterruptedException | BrokenBarrierException e) {}
+            } catch (InterruptedException | BrokenBarrierException e) {
+                Thread.currentThread().interrupt();
+            }
 
             for (Boid boid : boids) {
                 boid.updatePos(model);
