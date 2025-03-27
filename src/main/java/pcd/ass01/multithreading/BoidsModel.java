@@ -16,7 +16,6 @@ public class BoidsModel {
     private final double perceptionRadius;
     private final double avoidRadius;
     private final Random generator;
-    private volatile boolean paused;
 
     public BoidsModel(double initialSeparationWeight,
                       double initialAlignmentWeight,
@@ -36,7 +35,6 @@ public class BoidsModel {
         this.perceptionRadius = perceptionRadius;
         this.avoidRadius = avoidRadius;
         this.generator = generator;
-        this.paused = false;
 
     	boids = new ArrayList<>();
     }
@@ -111,17 +109,6 @@ public class BoidsModel {
             P2d pos = new P2d(-width/2 + generator.nextDouble() * width, -height/2 + generator.nextDouble() * height);
             V2d vel = new V2d(generator.nextDouble() * maxSpeed/2 - maxSpeed/4, generator.nextDouble() * maxSpeed/2 - maxSpeed/4);
             boids.add(new Boid(pos, vel));
-        }
-    }
-
-    public boolean isPuased() {
-        return paused;
-    }
-
-    public synchronized void setPaused(boolean paused) {
-        this.paused = paused;
-        if (!paused) {
-            notifyAll();
         }
     }
 }

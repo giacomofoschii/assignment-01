@@ -18,7 +18,7 @@ public class BoidsSimulation {
 	final static int SCREEN_HEIGHT = 800;
 	
 
-    public static void main(String[] args) {      
+    public static void main(String[] args) {
     	var model = new BoidsModel(
     					SEPARATION_WEIGHT, ALIGNMENT_WEIGHT, COHESION_WEIGHT, 
     					ENVIRONMENT_WIDTH, ENVIRONMENT_HEIGHT,
@@ -27,5 +27,9 @@ public class BoidsSimulation {
     					AVOID_RADIUS,
 						new Random());
     	var view = new BoidsView(model, SCREEN_WIDTH, SCREEN_HEIGHT);
+		var simulator = new BoidsSimulator(model);
+		view.setSimulator(simulator);
+		simulator.attachView(view);
+		simulator.runSimulation();
     }
 }

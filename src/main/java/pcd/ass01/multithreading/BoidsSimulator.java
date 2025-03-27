@@ -28,7 +28,7 @@ public class BoidsSimulator {
 
         List<Boid> boids = model.getBoids();
         for (int i = 0; i < numThreads; i++) {
-            threads.add(new BoidThread(getThreadPool(i, boids), model, barrier, administrator));
+            threads.add(new BoidThread(getThreadPool(i, boids), this, barrier, administrator));
         }
     }
 
@@ -77,18 +77,26 @@ public class BoidsSimulator {
     }
 
     public synchronized void pauseSimulation() {
-        model.setPaused(true);
+        this.paused = true;
     }
 
     public synchronized void resumeSimulation() {
-        model.setPaused(false); // Sveglia tutti i thread in attesa su wait()
+        this.paused = false;
+        notifyAll();
     }
-    
 
     public synchronized void stopSimulation() {
         running = false;
         for (Thread thread : threads) {
             thread.interrupt();
         }
+    }
+
+    public boolean isPaused() {
+        return this.paused;
+    }
+
+    public BoidsModel getModel() {
+        return model;
     }
 }

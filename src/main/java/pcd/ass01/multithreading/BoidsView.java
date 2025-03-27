@@ -94,9 +94,6 @@ public class BoidsView implements ChangeListener {
 				int nBoids = Integer.parseInt(input);
 				if (nBoids > 0) {
 					model.setBoidsNumber(nBoids);
-					this.simulator = new BoidsSimulator(model);
-					simulator.attachView(this);
-					simulator.runSimulation();
 					starting = true;
 				} else {
 					JOptionPane.showMessageDialog(frame, "Il numero di boids deve essere positivo",
@@ -152,4 +149,7 @@ public class BoidsView implements ChangeListener {
 		return height;
 	}
 
+	public void setSimulator(BoidsSimulator simulator) {
+		this.simulator = simulator;
+	}
 }

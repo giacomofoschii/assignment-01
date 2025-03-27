@@ -6,32 +6,33 @@ import java.util.concurrent.CyclicBarrier;
 
 public class BoidThread extends Thread{
     private final List<Boid> boids;
-    private final BoidsModel model;
+    private final BoidsSimulator simulator;
     private final CyclicBarrier barrier;
     private final Administrator administrator;
 
-    public BoidThread(final List<Boid> boids, final BoidsModel model,
+    public BoidThread(final List<Boid> boids, final BoidsSimulator simulator,
                       final CyclicBarrier barrier, final Administrator administrator) {
         this.boids = boids;
-        this.model = model;
+        this.simulator = simulator;
         this.barrier = barrier;
         this.administrator = administrator;
     }
 
     @Override
     public void run() {
-        while(!Thread.currentThread().isInterrupted()) {
-            synchronized (model) {
-                while(model.isPuased()) {
+        while(true) {
+            synchronized (this.simulator) {
+                while(this.simulator.isPaused()) {
                     try {
-                        model.wait();
+                        this.simulator.wait();
                     } catch (InterruptedException e) {
                         Thread.currentThread().interrupt();
                     }
                 }
             }
+
             for (Boid boid : boids) {
-                boid.updateVelocity(model);
+                boid.updateVelocity(this.simulator.getModel());
             }
 
             try {
@@ -41,11 +42,10 @@ public class BoidThread extends Thread{
             }
 
             for (Boid boid : boids) {
-                boid.updatePos(model);
+                boid.updatePos(this.simulator.getModel());
             }
 
             this.administrator.threadDone();
         }
     }
-
 }
