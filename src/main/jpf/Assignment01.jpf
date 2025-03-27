@@ -1,4 +1,4 @@
-target = pcd.ass01.multithreading.JPFBoidsSimulation
+target = pcd.ass01.multithreading.jpftesting.JPFBoidsSimulation
 
 classpath=build/classes/java/main
 
