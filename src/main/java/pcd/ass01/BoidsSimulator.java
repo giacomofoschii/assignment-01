@@ -37,39 +37,46 @@ public class BoidsSimulator {
     }
       
     public void runSimulation() {
-        for(Thread thread : threads) {
+        for (Thread thread : threads) {
             thread.start();
         }
-
+    
         while (running) {
-            if(paused) {
-                try {
-                    this.wait();
-                } catch (InterruptedException e) {
+            synchronized (this) {  // Aggiunto il blocco synchronized per wait()
+                while (paused) {   // Usato while invece di if per evitare spurious wakeups
+                    try {
+                        wait();
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt(); // Ripristina stato di interruzione
+                    }
                 }
             }
+    
             var t0 = System.currentTimeMillis();
             administrator.waitThreads();
-
+    
             if (view.isPresent()) {
                 view.get().update(framerate);
                 var t1 = System.currentTimeMillis();
                 var dtElapsed = t1 - t0;
-                var framratePeriod = 1000/FRAMERATE;
-
-                if (dtElapsed < framratePeriod) {
+                var frameRatePeriod = 1000 / FRAMERATE;
+    
+                if (dtElapsed < frameRatePeriod) {
                     try {
-                        Thread.sleep(framratePeriod - dtElapsed);
-                    } catch (Exception ex) {}
+                        Thread.sleep(frameRatePeriod - dtElapsed);
+                    } catch (InterruptedException ex) {
+                        Thread.currentThread().interrupt();
+                    }
                     framerate = FRAMERATE;
                 } else {
-                    framerate = (int) (1000/dtElapsed);
+                    framerate = (int) (1000 / dtElapsed);
                 }
             }
-
+    
             administrator.signalDone();
         }
     }
+    
 
     private List<Boid> getThreadPool(int threadIndex, List<Boid> boids) {
         int poolSize = boids.size() / numThreads;
@@ -82,10 +89,11 @@ public class BoidsSimulator {
         paused=true;
     }
 
-     public synchronized void resumeSimulation() {
+    public synchronized void resumeSimulation() {
         paused = false;
-        notifyAll();
-     }
+        notifyAll(); // Sveglia tutti i thread in attesa su wait()
+    }
+    
 
     public synchronized void stopSimulation() {
         running = false;

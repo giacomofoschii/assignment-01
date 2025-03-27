@@ -10,37 +10,24 @@ public class Administrator {
     }
 
     public synchronized void threadDone() {
-        try {
-            waitingThreads++;
-            /*if (waitingThreads < numThreads) {
-                wait();
-            } else {
-                notifyAll();
-            }*/
-
-            if (waitingThreads == numThreads) {
-               notifyAll();
-               }
-
-            while (waitingThreads < numThreads) {
-                wait();
-            }
-
-        } catch (InterruptedException e) {
+        waitingThreads++;
+        if (waitingThreads == numThreads) {
+            notifyAll(); // Sblocca tutti i thread in attesa
         }
     }
 
     public synchronized void waitThreads() {
-        try {
-            while (waitingThreads < numThreads) {
+        while (waitingThreads < numThreads) { // Attendi che tutti i thread abbiano terminato
+            try {
                 wait();
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt(); // Ripristina lo stato di interruzione
             }
-        } catch (InterruptedException e) {
         }
     }
 
     public synchronized void signalDone() {
         waitingThreads = 0;
-        notifyAll();
+        notifyAll(); // Sblocca eventuali thread in attesa di un nuovo ciclo
     }
 }
