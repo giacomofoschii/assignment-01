@@ -17,12 +17,14 @@ public class BoidsView implements ChangeListener {
 	private BoidsModel model;
 	private BoidsSimulator simulator;
 	private int width, height;
+	private BoidsController boidsController;
 	
 	public BoidsView(BoidsModel model, int width, int height) {
 		this.model = model;
 		this.width = width;
 		this.height = height;
 		this.isRunning = true;
+		this.boidsController = new BoidsController();
 
 		frame = new JFrame("Boids Simulation");
         frame.setSize(width, height);
@@ -93,10 +95,10 @@ public class BoidsView implements ChangeListener {
 			try {
 				int nBoids = Integer.parseInt(input);
 				if (nBoids > 0) {
-					model.setBoidsNumber(nBoids);
+					this.boidsController.setBoidsNumber(nBoids, model);
 					this.simulator = new BoidsSimulator(model);
-					simulator.attachView(this);
-					simulator.runSimulation();
+					this.simulator.attachView(this);
+					this.simulator.runSimulation();
 					starting = true;
 				} else {
 					JOptionPane.showMessageDialog(frame, "Il numero di boids deve essere positivo",

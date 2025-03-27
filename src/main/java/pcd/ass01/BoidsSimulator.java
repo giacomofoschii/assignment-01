@@ -92,4 +92,6 @@ public class BoidsSimulator {
             thread.interrupt();
         }
     }
+
+
 }
