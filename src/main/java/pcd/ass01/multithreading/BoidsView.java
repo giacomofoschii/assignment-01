@@ -42,8 +42,7 @@ public class BoidsView implements ChangeListener {
 
 		stopButton.addActionListener(e -> {
 			simulator.stopSimulation();
-			frame.dispose();
-			System.exit(0);
+			//startPanel();
         });
 
 		pauseButton.addActionListener(e -> {
@@ -81,6 +80,10 @@ public class BoidsView implements ChangeListener {
 
         frame.setVisible(true);
 
+		startPanel();
+	}
+
+	private void startPanel() {
 		boolean starting = false;
 		while(!starting) {
 			// Mostra il dialogo di input per il numero di boids
@@ -96,11 +99,11 @@ public class BoidsView implements ChangeListener {
 					model.setBoidsNumber(nBoids);
 					starting = true;
 				} else {
-					JOptionPane.showMessageDialog(frame, "Il numero di boids deve essere positivo",
+					JOptionPane.showMessageDialog(frame, "Boids' number must be positive",
 							"Errore di input", JOptionPane.ERROR_MESSAGE);
 				}
 			} catch (NumberFormatException ex) {
-				JOptionPane.showMessageDialog(frame, "Inserisci un numero valido",
+				JOptionPane.showMessageDialog(frame, "Letters or symbols not allowed, insert a valid number!",
 						"Errore di input", JOptionPane.ERROR_MESSAGE);
 			}
 		}
