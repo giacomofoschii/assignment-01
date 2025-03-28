@@ -41,39 +41,9 @@ public class BoidsView implements ChangeListener {
 		stopButton = new JButton("Stop");
 
 		stopButton.addActionListener(e -> {
-			simulator.stopSimulation();  // Ferma la simulazione attuale
-		
-			boolean restarting = false;
-			while (!restarting) {
-				// Mostra il dialogo di input per il numero di boids
-				String input = JOptionPane.showInputDialog(frame, "Inserisci il numero di boids:",
-						"Numero di Boids", JOptionPane.QUESTION_MESSAGE);
-		
-				if (input == null) { 
-					frame.dispose(); 
-					System.exit(0); // Se l'utente annulla, chiude tutto
-				}
-		
-				try {
-					int nBoids = Integer.parseInt(input);
-					if (nBoids > 0) {
-						model.setBoidsNumber(nBoids);
-						this.simulator = new BoidsSimulator(model); // Crea un nuovo simulatore
-						simulator.attachView(this);
-		
-						// Avvia la nuova simulazione in un thread separato
-						new Thread(simulator::runSimulation).start();
-		
-						restarting = true;
-					} else {
-						JOptionPane.showMessageDialog(frame, "Il numero di boids deve essere positivo",
-								"Errore di input", JOptionPane.ERROR_MESSAGE);
-					}
-				} catch (NumberFormatException ex) {
-					JOptionPane.showMessageDialog(frame, "Inserisci un numero valido",
-							"Errore di input", JOptionPane.ERROR_MESSAGE);
-				}
-			}
+			simulator.stopSimulation();
+			frame.dispose();
+			System.exit(0);
         });
 
 		pauseButton.addActionListener(e -> {
