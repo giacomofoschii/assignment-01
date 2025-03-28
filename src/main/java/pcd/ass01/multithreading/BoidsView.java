@@ -9,21 +9,20 @@ import java.util.Hashtable;
 
 public class BoidsView implements ChangeListener {
 
-	private final JFrame frame;
-	private final BoidsPanel boidsPanel;
-	private final JSlider cohesionSlider, separationSlider, alignmentSlider;
-	private final JButton stopButton, pauseButton;
+	private JFrame frame;
+	private BoidsPanel boidsPanel;
+	private JSlider cohesionSlider, separationSlider, alignmentSlider;
+	private JButton stopButton, pauseButton;
 	private boolean isRunning;
-	private final BoidsModel model;
-	private final int width, height;
-	private final BoidsController boidsController;
+	private BoidsModel model;
+	private BoidsSimulator simulator;
+	private int width, height;
 	
 	public BoidsView(BoidsModel model, int width, int height) {
 		this.model = model;
 		this.width = width;
 		this.height = height;
 		this.isRunning = true;
-		this.boidsController = new BoidsController();
 
 		frame = new JFrame("Boids Simulation");
         frame.setSize(width, height);
@@ -42,16 +41,47 @@ public class BoidsView implements ChangeListener {
 		stopButton = new JButton("Stop");
 
 		stopButton.addActionListener(e -> {
-			this.boidsController.getSimulator().stopSimulation();
-			//startPanel();
+			simulator.stopSimulation();  // Ferma la simulazione attuale
+		
+			boolean restarting = false;
+			while (!restarting) {
+				// Mostra il dialogo di input per il numero di boids
+				String input = JOptionPane.showInputDialog(frame, "Inserisci il numero di boids:",
+						"Numero di Boids", JOptionPane.QUESTION_MESSAGE);
+		
+				if (input == null) { 
+					frame.dispose(); 
+					System.exit(0); // Se l'utente annulla, chiude tutto
+				}
+		
+				try {
+					int nBoids = Integer.parseInt(input);
+					if (nBoids > 0) {
+						model.setBoidsNumber(nBoids);
+						this.simulator = new BoidsSimulator(model); // Crea un nuovo simulatore
+						simulator.attachView(this);
+		
+						// Avvia la nuova simulazione in un thread separato
+						new Thread(simulator::runSimulation).start();
+		
+						restarting = true;
+					} else {
+						JOptionPane.showMessageDialog(frame, "Il numero di boids deve essere positivo",
+								"Errore di input", JOptionPane.ERROR_MESSAGE);
+					}
+				} catch (NumberFormatException ex) {
+					JOptionPane.showMessageDialog(frame, "Inserisci un numero valido",
+							"Errore di input", JOptionPane.ERROR_MESSAGE);
+				}
+			}
         });
 
 		pauseButton.addActionListener(e -> {
 			if (isRunning) {
-				this.boidsController.getSimulator().pauseSimulation();
+				simulator.pauseSimulation();
 				pauseButton.setText("Resume");
 			} else {
-				this.boidsController.getSimulator().resumeSimulation();
+				simulator.resumeSimulation();
 				pauseButton.setText("Pause");
 			}
 			isRunning = !isRunning;
@@ -97,7 +127,7 @@ public class BoidsView implements ChangeListener {
 			try {
 				int nBoids = Integer.parseInt(input);
 				if (nBoids > 0) {
-					this.boidsController.setBoidsNumber(nBoids, this.model);
+					model.setBoidsNumber(nBoids);
 					starting = true;
 				} else {
 					JOptionPane.showMessageDialog(frame, "Boids' number must be positive",
@@ -154,6 +184,6 @@ public class BoidsView implements ChangeListener {
 	}
 
 	public void setSimulator(BoidsSimulator simulator) {
-		this.boidsController.setBoidsSimulator(simulator);
+		this.simulator = simulator;
 	}
 }
