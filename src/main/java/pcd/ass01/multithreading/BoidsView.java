@@ -14,10 +14,12 @@ public class BoidsView implements ChangeListener {
 	private final JSlider cohesionSlider, separationSlider, alignmentSlider;
 	private final JButton stopButton, pauseButton;
 	private boolean isRunning;
+	private final BoidsModel model;
 	private final BoidsController boidsController;
 	private final int width, height;
 	
-	public BoidsView(final int width, final int height) {
+	public BoidsView(final BoidsModel model, final int width, final int height) {
+		this.model = model;
 		this.width = width;
 		this.height = height;
 		this.isRunning = true;
@@ -31,7 +33,7 @@ public class BoidsView implements ChangeListener {
 		LayoutManager layout = new BorderLayout();
 		cp.setLayout(layout);
 
-        boidsPanel = new BoidsPanel(this, this.boidsController.getSimulator().getModel());
+        boidsPanel = new BoidsPanel(this, model);
 		cp.add(BorderLayout.CENTER, boidsPanel);
 
 		JPanel controlPanel = new JPanel();
@@ -56,8 +58,8 @@ public class BoidsView implements ChangeListener {
 				try {
 					int nBoids = Integer.parseInt(input);
 					if (nBoids > 0) {
-						this.boidsController.getSimulator().getModel().setBoidsNumber(nBoids);// Imposta il numero di boids
-						this.boidsController.initializeBoidsSimulator(this.boidsController.getSimulator().getModel()); // Crea un nuovo simulatore
+						this.boidsController.setBoidsNumber(nBoids, this.model); // Imposta il numero di boids
+						this.boidsController.initializeBoidsSimulator(this.model); // Crea un nuovo simulatore
 						this.boidsController.getSimulator().attachView(this);
 		
 						// Avvia la nuova simulazione in un thread separato
@@ -126,7 +128,7 @@ public class BoidsView implements ChangeListener {
 			try {
 				int nBoids = Integer.parseInt(input);
 				if (nBoids > 0) {
-					this.boidsController.getSimulator().getModel().setBoidsNumber(nBoids);
+					model.setBoidsNumber(nBoids);
 					starting = true;
 				} else {
 					JOptionPane.showMessageDialog(frame, "Boids' number must be positive",
@@ -164,13 +166,13 @@ public class BoidsView implements ChangeListener {
 	public void stateChanged(ChangeEvent e) {
 		if (e.getSource() == separationSlider) {
 			var val = separationSlider.getValue();
-			this.boidsController.getSimulator().getModel().setSeparationWeight(0.1*val);
+			model.setSeparationWeight(0.1*val);
 		} else if (e.getSource() == cohesionSlider) {
 			var val = cohesionSlider.getValue();
-			this.boidsController.getSimulator().getModel().setCohesionWeight(0.1*val);
+			model.setCohesionWeight(0.1*val);
 		} else {
 			var val = alignmentSlider.getValue();
-			this.boidsController.getSimulator().getModel().setAlignmentWeight(0.1*val);
+			model.setAlignmentWeight(0.1*val);
 		}
 	}
 	
