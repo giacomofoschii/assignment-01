@@ -12,6 +12,10 @@ public class BoidsController {
         this.boidsSimulator = boidsSimulator;
     }
 
+    public void initializeBoidsSimulator(final BoidsModel model) {
+        this.boidsSimulator = new BoidsSimulator(model);
+    }
+
     public BoidsSimulator getSimulator() {
         return this.boidsSimulator;
     }

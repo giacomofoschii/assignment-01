@@ -9,20 +9,21 @@ import java.util.Hashtable;
 
 public class BoidsView implements ChangeListener {
 
-	private JFrame frame;
-	private BoidsPanel boidsPanel;
-	private JSlider cohesionSlider, separationSlider, alignmentSlider;
-	private JButton stopButton, pauseButton;
+	private final JFrame frame;
+	private final BoidsPanel boidsPanel;
+	private final JSlider cohesionSlider, separationSlider, alignmentSlider;
+	private final JButton stopButton, pauseButton;
 	private boolean isRunning;
-	private BoidsModel model;
-	private BoidsSimulator simulator;
-	private int width, height;
+	private final BoidsModel model;
+	private final BoidsController boidsController;
+	private final int width, height;
 	
-	public BoidsView(BoidsModel model, int width, int height) {
+	public BoidsView(final BoidsModel model, final int width, final int height) {
 		this.model = model;
 		this.width = width;
 		this.height = height;
 		this.isRunning = true;
+		this.boidsController = new BoidsController();
 
 		frame = new JFrame("Boids Simulation");
         frame.setSize(width, height);
@@ -41,7 +42,7 @@ public class BoidsView implements ChangeListener {
 		stopButton = new JButton("Stop");
 
 		stopButton.addActionListener(e -> {
-			simulator.stopSimulation();  // Ferma la simulazione attuale
+			this.boidsController.getSimulator().stopSimulation();  // Ferma la simulazione attuale
 		
 			boolean restarting = false;
 			while (!restarting) {
@@ -57,12 +58,12 @@ public class BoidsView implements ChangeListener {
 				try {
 					int nBoids = Integer.parseInt(input);
 					if (nBoids > 0) {
-						model.setBoidsNumber(nBoids);
-						this.simulator = new BoidsSimulator(model); // Crea un nuovo simulatore
-						simulator.attachView(this);
+						this.boidsController.setBoidsNumber(nBoids, this.model); // Imposta il numero di boids
+						this.boidsController.initializeBoidsSimulator(this.model); // Crea un nuovo simulatore
+						this.boidsController.getSimulator().attachView(this);
 		
 						// Avvia la nuova simulazione in un thread separato
-						new Thread(simulator::runSimulation).start();
+						new Thread(this.boidsController.getSimulator()::runSimulation).start();
 		
 						restarting = true;
 					} else {
@@ -78,10 +79,10 @@ public class BoidsView implements ChangeListener {
 
 		pauseButton.addActionListener(e -> {
 			if (isRunning) {
-				simulator.pauseSimulation();
+				this.boidsController.getSimulator().pauseSimulation();
 				pauseButton.setText("Resume");
 			} else {
-				simulator.resumeSimulation();
+				this.boidsController.getSimulator().resumeSimulation();
 				pauseButton.setText("Pause");
 			}
 			isRunning = !isRunning;
@@ -184,6 +185,6 @@ public class BoidsView implements ChangeListener {
 	}
 
 	public void setSimulator(BoidsSimulator simulator) {
-		this.simulator = simulator;
+		this.boidsController.setBoidsSimulator(simulator);
 	}
 }
