@@ -67,8 +67,13 @@ public class BoidsView implements ChangeListener {
 
 		stopButton.addActionListener(e -> {
 			this.boidsController.getSimulator().stopSimulation();
-			frame.dispose();
-			this.boidsController.initialize();
+			startPanel();
+			this.boidsController.getSimulator().newSimulation();
+			if(!isRunning) {
+				this.boidsController.getSimulator().resumeSimulation();
+				pauseButton.setText("Pause");
+				isRunning = true;
+			}
         });
 
 		pauseButton.addActionListener(e -> {
@@ -100,7 +105,7 @@ public class BoidsView implements ChangeListener {
 			try {
 				int nBoids = Integer.parseInt(input);
 				if (nBoids > 0) {
-					this.boidsController.setBoidsNumber(nBoids);
+					this.boidsController.getModel().setBoidsNumber(nBoids);
 					starting = true;
 				} else {
 					JOptionPane.showMessageDialog(frame, "Boids' number must be positive",

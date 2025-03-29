@@ -5,7 +5,7 @@ import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.CyclicBarrier;
 
 public class BoidThread extends Thread{
-    private final List<Boid> boids;
+    private List<Boid> boids;
     private final BoidsController controller;
     private final CyclicBarrier barrier;
     private final Administrator administrator;
@@ -13,10 +13,17 @@ public class BoidThread extends Thread{
 
     public BoidThread(final List<Boid> boids, final BoidsController controller,
                       final CyclicBarrier barrier, final Administrator administrator) {
-        this.boids = boids;
+        assignPool(boids);
         this.controller = controller;
         this.barrier = barrier;
         this.administrator = administrator;
+    }
+
+    public void assignPool(List<Boid> boids) {
+        if(this.boids != null) {
+            this.boids.clear();
+        }
+        this.boids = boids;
     }
 
     public void setStopped(boolean stopped) {

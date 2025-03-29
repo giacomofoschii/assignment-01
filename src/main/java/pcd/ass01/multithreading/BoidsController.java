@@ -20,10 +20,6 @@ public class BoidsController {
     private BoidsModel model;
     private BoidsView view;
 
-    public void setBoidsNumber(final int nBoids) {
-        this.model.setBoidsNumber(nBoids);
-    }
-
     public BoidsSimulator getSimulator() {
         return this.simulator;
     }
@@ -46,7 +42,8 @@ public class BoidsController {
                 new Random());
         this.view = new BoidsView(this, SCREEN_WIDTH, SCREEN_HEIGHT);
         this.simulator = new BoidsSimulator(this);
-        new Thread(() -> this.simulator.runSimulation()).start();
+        this.simulator.startThreads();
+        this.simulator.runSimulation();
     }
 
 }

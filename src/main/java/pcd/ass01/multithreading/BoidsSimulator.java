@@ -3,13 +3,15 @@ package pcd.ass01.multithreading;
 import java.util.*;
 import java.util.concurrent.CyclicBarrier;
 
+import static java.lang.Thread.currentThread;
+
 public class BoidsSimulator {
 
     private final BoidsController controller;
     private final Administrator administrator;
     private final CyclicBarrier barrier;
     private final int numThreads;
-    private final Queue<BoidThread> threads;
+    private final LinkedList<BoidThread> threads;
     private volatile boolean running = true;
     private volatile boolean paused = false;
     
@@ -27,18 +29,19 @@ public class BoidsSimulator {
     }
 
     public void divideBoids() {
-        List<Boid> boids = controller.getModel().getBoids();
         for (int i = 0; i < numThreads; i++) {
-            threads.add(new BoidThread(getThreadPool(i, boids), this.controller, barrier, administrator));
+            threads.add(new BoidThread(getThreadPool(i), this.controller, barrier, administrator));
         }
     }
-      
-    public void runSimulation() {
+
+    public void startThreads() {
         for (BoidThread thread : threads) {
             thread.setStopped(false);
             thread.start();
         }
-    
+    }
+      
+    public void runSimulation() {
         while (running) {
 
             var t0 = System.currentTimeMillis();
@@ -54,7 +57,7 @@ public class BoidsSimulator {
                     try {
                         Thread.sleep(frameRatePeriod - dtElapsed);
                     } catch (InterruptedException ex) {
-                        Thread.currentThread().interrupt();
+                        currentThread().interrupt();
                     }
                     framerate = FRAMERATE;
                 } else {
@@ -67,7 +70,8 @@ public class BoidsSimulator {
     }
     
 
-    private List<Boid> getThreadPool(int threadIndex, List<Boid> boids) {
+    private List<Boid> getThreadPool(int threadIndex) {
+        List<Boid> boids = this.controller.getModel().getBoids();
         int poolSize = boids.size() / numThreads;
         int start = threadIndex * poolSize;
         int end = (threadIndex == numThreads - 1) ? boids.size() : start + poolSize;
@@ -83,14 +87,27 @@ public class BoidsSimulator {
         notifyAll();
     }
 
+    public synchronized void newSimulation() {
+        paused = false;
+        running = true;
+        for (int i = 0; i < numThreads; i++) {
+            if (!threads.get(i).isAlive()) {
+                threads.set(i, new BoidThread(getThreadPool(i), this.controller, barrier, administrator));
+                threads.get(i).start();
+            } else {
+                threads.get(i).assignPool(getThreadPool(i));
+                threads.get(i).setStopped(false);
+            }
+        }
+        new Thread(this::runSimulation).start();
+    }
+
     public synchronized void stopSimulation() {
         paused = false;
         running = false;
         for (BoidThread thread : threads) {
             thread.setStopped(true);
-            thread.interrupt();
         }
-        threads.clear();
     }
 
     public boolean isPaused() {
