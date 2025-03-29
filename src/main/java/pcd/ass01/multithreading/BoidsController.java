@@ -46,7 +46,7 @@ public class BoidsController {
                 new Random());
         this.view = new BoidsView(this, SCREEN_WIDTH, SCREEN_HEIGHT);
         this.simulator = new BoidsSimulator(this);
-        this.simulator.runSimulation();
+        new Thread(() -> this.simulator.runSimulation()).start();
     }
 
 }
