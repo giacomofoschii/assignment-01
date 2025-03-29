@@ -35,6 +35,7 @@ public class BoidsSimulator {
       
     public void runSimulation() {
         for (BoidThread thread : threads) {
+            thread.setStopped(false);
             thread.start();
         }
     
@@ -86,7 +87,7 @@ public class BoidsSimulator {
         paused = false;
         running = false;
         for (BoidThread thread : threads) {
-            thread.stopThread();
+            thread.setStopped(true);
             thread.interrupt();
         }
         threads.clear();

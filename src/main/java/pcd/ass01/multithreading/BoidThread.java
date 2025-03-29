@@ -9,7 +9,7 @@ public class BoidThread extends Thread{
     private final BoidsController controller;
     private final CyclicBarrier barrier;
     private final Administrator administrator;
-    private volatile boolean stopped = false;
+    private volatile boolean stopped;
 
     public BoidThread(final List<Boid> boids, final BoidsController controller,
                       final CyclicBarrier barrier, final Administrator administrator) {
@@ -19,8 +19,8 @@ public class BoidThread extends Thread{
         this.administrator = administrator;
     }
 
-    public void stopThread() {
-        this.stopped = true;
+    public void setStopped(boolean stopped) {
+        this.stopped = stopped;
     }
 
     @Override
