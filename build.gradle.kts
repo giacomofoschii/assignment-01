@@ -1,4 +1,3 @@
-
 import org.gradle.configurationcache.extensions.capitalized
 import java.io.ByteArrayOutputStream
 import java.io.OutputStream
@@ -34,9 +33,6 @@ java {
 }
 */
 
-//tasks.compileJava {
-//    options.release.set(8)
-//}
 // Utility function for verification through JPF
 
 val verificationGroup = "Verification"

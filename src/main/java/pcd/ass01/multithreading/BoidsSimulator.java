@@ -1,4 +1,4 @@
-package pcd.ass01;
+package pcd.ass01.multithreading;
 
 import java.util.*;
 import java.util.concurrent.CyclicBarrier;
@@ -25,10 +25,13 @@ public class BoidsSimulator {
         this.administrator = new Administrator(numThreads);
         this.barrier = new CyclicBarrier(numThreads);
 
+        divideBoids();
+    }
 
+    public void divideBoids() {
         List<Boid> boids = model.getBoids();
         for (int i = 0; i < numThreads; i++) {
-            threads.add(new BoidThread(getThreadPool(i, boids), model, barrier, administrator));
+            threads.add(new BoidThread(getThreadPool(i, boids), this, barrier, administrator));
         }
     }
 
@@ -42,7 +45,7 @@ public class BoidsSimulator {
         }
     
         while (running) {
-            
+
             var t0 = System.currentTimeMillis();
             administrator.waitThreads();
     
@@ -77,19 +80,36 @@ public class BoidsSimulator {
     }
 
     public synchronized void pauseSimulation() {
-        model.setPaused(true);
+        this.paused = true;
     }
-    
+
     public synchronized void resumeSimulation() {
-        model.setPaused(false);
+        this.paused = false;
+        notifyAll();
     }
-    
-    
 
     public synchronized void stopSimulation() {
         running = false;
         for (Thread thread : threads) {
             thread.interrupt();
         }
+        threads.clear();
+    }
+
+    public boolean isPaused() {
+        return this.paused;
+    }
+
+    public BoidsModel getModel() {
+        return model;
+    }
+
+    public void reset() {
+        List<Boid> boids = model.getBoids();
+        for (int i = 0; i < numThreads; i++) {
+            threads.add(new BoidThread(getThreadPool(i, boids), this, barrier, administrator));
+        }
+        running = true;
+        runSimulation();
     }
 }

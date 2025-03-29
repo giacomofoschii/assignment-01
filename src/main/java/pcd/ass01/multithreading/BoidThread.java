@@ -1,4 +1,4 @@
-package pcd.ass01;
+package pcd.ass01.multithreading;
 
 import java.util.List;
 import java.util.concurrent.BrokenBarrierException;
@@ -6,51 +6,46 @@ import java.util.concurrent.CyclicBarrier;
 
 public class BoidThread extends Thread{
     private final List<Boid> boids;
-    private final BoidsModel model;
+    private final BoidsSimulator simulator;
     private final CyclicBarrier barrier;
     private final Administrator administrator;
 
-    public BoidThread(final List<Boid> boids, final BoidsModel model,
+    public BoidThread(final List<Boid> boids, final BoidsSimulator simulator,
                       final CyclicBarrier barrier, final Administrator administrator) {
         this.boids = boids;
-        this.model = model;
+        this.simulator = simulator;
         this.barrier = barrier;
         this.administrator = administrator;
     }
 
     @Override
     public void run() {
-        while (!Thread.currentThread().isInterrupted()) {
-            synchronized (model) {
-                while (model.isPaused()) { 
+        while(true) {
+            synchronized (this.simulator) {
+                while(this.simulator.isPaused()) {
                     try {
-                        model.wait(); 
+                        this.simulator.wait();
                     } catch (InterruptedException e) {
                         Thread.currentThread().interrupt();
-                        return; 
                     }
                 }
             }
-    
+
             for (Boid boid : boids) {
-                boid.updateVelocity(model);
+                boid.updateVelocity(this.simulator.getModel());
             }
-    
+
             try {
-                barrier.await(); 
+                barrier.await(); //Wait all the boids to update their velocities
             } catch (InterruptedException | BrokenBarrierException e) {
                 Thread.currentThread().interrupt();
-                return;
             }
-    
+
             for (Boid boid : boids) {
-                boid.updatePos(model);
+                boid.updatePos(this.simulator.getModel());
             }
-    
-            administrator.threadDone();
+
+            this.administrator.threadDone();
         }
     }
-    
-
-
 }

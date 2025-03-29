@@ -1,4 +1,4 @@
-package pcd.ass01;
+package pcd.ass01.multithreading;
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
@@ -9,20 +9,21 @@ import java.util.Hashtable;
 
 public class BoidsView implements ChangeListener {
 
-	private JFrame frame;
-	private BoidsPanel boidsPanel;
-	private JSlider cohesionSlider, separationSlider, alignmentSlider;
-	private JButton stopButton, pauseButton;
+	private final JFrame frame;
+	private final BoidsPanel boidsPanel;
+	private final JSlider cohesionSlider, separationSlider, alignmentSlider;
+	private final JButton stopButton, pauseButton;
 	private boolean isRunning;
-	private BoidsModel model;
-	private BoidsSimulator simulator;
-	private int width, height;
+	private final BoidsModel model;
+	private final BoidsController boidsController;
+	private final int width, height;
 	
-	public BoidsView(BoidsModel model, int width, int height) {
+	public BoidsView(final BoidsModel model, final int width, final int height) {
 		this.model = model;
 		this.width = width;
 		this.height = height;
 		this.isRunning = true;
+		this.boidsController = new BoidsController();
 
 		frame = new JFrame("Boids Simulation");
         frame.setSize(width, height);
@@ -41,17 +42,47 @@ public class BoidsView implements ChangeListener {
 		stopButton = new JButton("Stop");
 
 		stopButton.addActionListener(e -> {
-			simulator.stopSimulation();
-			frame.dispose();
-			System.exit(0);
+			this.boidsController.getSimulator().stopSimulation();  // Ferma la simulazione attuale
+		
+			boolean restarting = false;
+			while (!restarting) {
+				// Mostra il dialogo di input per il numero di boids
+				String input = JOptionPane.showInputDialog(frame, "Inserisci il numero di boids:",
+						"Numero di Boids", JOptionPane.QUESTION_MESSAGE);
+		
+				if (input == null) { 
+					frame.dispose(); 
+					System.exit(0); // Se l'utente annulla, chiude tutto
+				}
+		
+				try {
+					int nBoids = Integer.parseInt(input);
+					if (nBoids > 0) {
+						this.boidsController.setBoidsNumber(nBoids, this.model); // Imposta il numero di boids
+						this.boidsController.initializeBoidsSimulator(this.model); // Crea un nuovo simulatore
+						this.boidsController.getSimulator().attachView(this);
+		
+						// Avvia la nuova simulazione in un thread separato
+						new Thread(this.boidsController.getSimulator()::runSimulation).start();
+		
+						restarting = true;
+					} else {
+						JOptionPane.showMessageDialog(frame, "Il numero di boids deve essere positivo",
+								"Errore di input", JOptionPane.ERROR_MESSAGE);
+					}
+				} catch (NumberFormatException ex) {
+					JOptionPane.showMessageDialog(frame, "Inserisci un numero valido",
+							"Errore di input", JOptionPane.ERROR_MESSAGE);
+				}
+			}
         });
 
 		pauseButton.addActionListener(e -> {
 			if (isRunning) {
-				simulator.pauseSimulation();
+				this.boidsController.getSimulator().pauseSimulation();
 				pauseButton.setText("Resume");
 			} else {
-				simulator.resumeSimulation();
+				this.boidsController.getSimulator().resumeSimulation();
 				pauseButton.setText("Pause");
 			}
 			isRunning = !isRunning;
@@ -81,6 +112,10 @@ public class BoidsView implements ChangeListener {
 
         frame.setVisible(true);
 
+		startPanel();
+	}
+
+	private void startPanel() {
 		boolean starting = false;
 		while(!starting) {
 			// Mostra il dialogo di input per il numero di boids
@@ -94,16 +129,13 @@ public class BoidsView implements ChangeListener {
 				int nBoids = Integer.parseInt(input);
 				if (nBoids > 0) {
 					model.setBoidsNumber(nBoids);
-					this.simulator = new BoidsSimulator(model);
-					simulator.attachView(this);
-					simulator.runSimulation();
 					starting = true;
 				} else {
-					JOptionPane.showMessageDialog(frame, "Il numero di boids deve essere positivo",
+					JOptionPane.showMessageDialog(frame, "Boids' number must be positive",
 							"Errore di input", JOptionPane.ERROR_MESSAGE);
 				}
 			} catch (NumberFormatException ex) {
-				JOptionPane.showMessageDialog(frame, "Inserisci un numero valido",
+				JOptionPane.showMessageDialog(frame, "Letters or symbols not allowed, insert a valid number!",
 						"Errore di input", JOptionPane.ERROR_MESSAGE);
 			}
 		}
@@ -152,4 +184,7 @@ public class BoidsView implements ChangeListener {
 		return height;
 	}
 
+	public void setSimulator(BoidsSimulator simulator) {
+		this.boidsController.setBoidsSimulator(simulator);
+	}
 }

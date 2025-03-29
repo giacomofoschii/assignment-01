@@ -1,4 +1,4 @@
-package pcd.ass01;
+package pcd.ass01.multithreading;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -57,7 +57,7 @@ public class Boid {
         if (pos.y() < model.getMinY()) pos = pos.sum(new V2d(0, model.getHeight()));
         if (pos.y() >= model.getMaxY()) pos = pos.sum(new V2d(0, -model.getHeight()));
     }
-    
+
     private List<Boid> getNearbyBoids(BoidsModel model) {
     	var list = new ArrayList<Boid>();
         for (Boid other : model.getBoids()) {
@@ -75,7 +75,7 @@ public class Boid {
     private V2d calculateAlignment(List<Boid> nearbyBoids, BoidsModel model) {
         double avgVx = 0;
         double avgVy = 0;
-        if (nearbyBoids.size() > 0) {
+        if (!nearbyBoids.isEmpty()) {
 	        for (Boid other : nearbyBoids) {
 	        	V2d otherVel = other.getVel();
 	            avgVx += otherVel.x();
@@ -92,7 +92,7 @@ public class Boid {
     private V2d calculateCohesion(List<Boid> nearbyBoids, BoidsModel model) {
         double centerX = 0;
         double centerY = 0;
-        if (nearbyBoids.size() > 0) {
+        if (!nearbyBoids.isEmpty()) {
 	        for (Boid other: nearbyBoids) {
 	        	P2d otherPos = other.getPos();
 	            centerX += otherPos.x();

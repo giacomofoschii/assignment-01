@@ -1,11 +1,11 @@
-package pcd.ass01;
+package pcd.ass01.cleanProject;
 
 import javax.swing.*;
 import java.awt.*;
 
 public class BoidsPanel extends JPanel {
 
-	private BoidsView view; 
+	private BoidsView view;
 	private BoidsModel model;
     private int framerate;
 
