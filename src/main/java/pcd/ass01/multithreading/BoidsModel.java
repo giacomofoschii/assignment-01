@@ -13,7 +13,6 @@ public class BoidsModel {
     private final double width;
     private final double height;
     private final double maxSpeed;
-    private volatile boolean paused = false;
     private final double perceptionRadius;
     private final double avoidRadius;
     private final Random generator;
@@ -38,10 +37,6 @@ public class BoidsModel {
         this.generator = generator;
 
     	boids = new ArrayList<>();
-    }
-    
-    public synchronized boolean isPaused() {
-        return paused;
     }
 
     public List<Boid> getBoids(){
@@ -116,12 +111,4 @@ public class BoidsModel {
             boids.add(new Boid(pos, vel));
         }
     }
-
-    public synchronized void setPaused(boolean paused) {
-        this.paused = paused;
-        if (!paused) {
-            notifyAll();
-        }
-    }
-    
 }
