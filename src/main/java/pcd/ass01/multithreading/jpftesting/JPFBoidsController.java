@@ -1,7 +1,6 @@
 package pcd.ass01.multithreading.jpftesting;
 
 public class JPFBoidsController {
-    private JPFBoidsSimulator simulator;
     private JPFBoidsModel model;
 
     public JPFBoidsModel getModel() {
@@ -11,11 +10,13 @@ public class JPFBoidsController {
     public void initialize() {
         this.model = new JPFBoidsModel();
         this.model.setBoidsNumber(10);
-        this.simulator = new JPFBoidsSimulator(this);
-        this.simulator.startThreads();
-        this.simulator.runSimulation();
+        JPFBoidsSimulator simulator = new JPFBoidsSimulator(this);
+        simulator.startThreads();
+        simulator.runSimulation();
+        simulator.stopSimulation();
         this.model.setBoidsNumber(50);
-        this.simulator.newSimulation();
+        simulator.newSimulation();
+        simulator.stopSimulation();
     }
 
 }

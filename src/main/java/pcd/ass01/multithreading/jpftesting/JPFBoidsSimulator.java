@@ -38,20 +38,14 @@ public class JPFBoidsSimulator {
     }
 
     public void runSimulation() {
-        int i = 20;
         while (running) {
             administrator.waitThreads();
             administrator.signalDone();
-            if(i>0) {
-                i--;
-            } else {
-                stopSimulation();
-            }
+            running = false;
         }
     }
 
     public synchronized void stopSimulation() {
-        running = false;
         for (JPFBoidThread thread : threads) {
             thread.setStopped(true);
         }

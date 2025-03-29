@@ -95,7 +95,6 @@ public class BoidsView implements ChangeListener {
 	private void startPanel() {
 		boolean starting = false;
 		while(!starting) {
-			// Mostra il dialogo di input per il numero di boids
 			String input = JOptionPane.showInputDialog(frame, "Insert boids' number",
 					"Boids' number", JOptionPane.QUESTION_MESSAGE);
 			if(input == null) {
