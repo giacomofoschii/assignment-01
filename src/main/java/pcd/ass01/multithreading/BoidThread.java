@@ -6,25 +6,30 @@ import java.util.concurrent.CyclicBarrier;
 
 public class BoidThread extends Thread{
     private final List<Boid> boids;
-    private final BoidsSimulator simulator;
+    private final BoidsController controller;
     private final CyclicBarrier barrier;
     private final Administrator administrator;
+    private volatile boolean stopped = false;
 
-    public BoidThread(final List<Boid> boids, final BoidsSimulator simulator,
+    public BoidThread(final List<Boid> boids, final BoidsController controller,
                       final CyclicBarrier barrier, final Administrator administrator) {
         this.boids = boids;
-        this.simulator = simulator;
+        this.controller = controller;
         this.barrier = barrier;
         this.administrator = administrator;
     }
 
+    public void stopThread() {
+        this.stopped = true;
+    }
+
     @Override
     public void run() {
-        while(true) {
-            synchronized (this.simulator) {
-                while(this.simulator.isPaused()) {
+        while(!stopped) {
+            synchronized (this.controller.getSimulator()) {
+                while(this.controller.getSimulator().isPaused()) {
                     try {
-                        this.simulator.wait();
+                        this.controller.getSimulator().wait();
                     } catch (InterruptedException e) {
                         Thread.currentThread().interrupt();
                     }
@@ -32,7 +37,7 @@ public class BoidThread extends Thread{
             }
 
             for (Boid boid : boids) {
-                boid.updateVelocity(this.simulator.getModel());
+                boid.updateVelocity(this.controller.getModel());
             }
 
             try {
@@ -42,7 +47,7 @@ public class BoidThread extends Thread{
             }
 
             for (Boid boid : boids) {
-                boid.updatePos(this.simulator.getModel());
+                boid.updatePos(this.controller.getModel());
             }
 
             this.administrator.threadDone();

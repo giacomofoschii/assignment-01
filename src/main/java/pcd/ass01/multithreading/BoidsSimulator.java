@@ -5,8 +5,7 @@ import java.util.concurrent.CyclicBarrier;
 
 public class BoidsSimulator {
 
-    private BoidsModel model;
-    private Optional<BoidsView> view;
+    private final BoidsController controller;
     private final Administrator administrator;
     private final CyclicBarrier barrier;
     private final int numThreads;
@@ -17,9 +16,8 @@ public class BoidsSimulator {
     private static final int FRAMERATE = 25;
     private int framerate;
     
-    public BoidsSimulator(BoidsModel model) {
-        this.model = model;
-        this.view = Optional.empty();
+    public BoidsSimulator(BoidsController controller) {
+        this.controller = controller;
         this.numThreads = Runtime.getRuntime().availableProcessors() + 1;
         this.threads = new LinkedList<>();
         this.administrator = new Administrator(numThreads);
@@ -29,18 +27,14 @@ public class BoidsSimulator {
     }
 
     public void divideBoids() {
-        List<Boid> boids = model.getBoids();
+        List<Boid> boids = controller.getModel().getBoids();
         for (int i = 0; i < numThreads; i++) {
-            threads.add(new BoidThread(getThreadPool(i, boids), this, barrier, administrator));
+            threads.add(new BoidThread(getThreadPool(i, boids), this.controller, barrier, administrator));
         }
-    }
-
-    public void attachView(BoidsView view) {
-    	this.view = Optional.of(view);
     }
       
     public void runSimulation() {
-        for (Thread thread : threads) {
+        for (BoidThread thread : threads) {
             thread.start();
         }
     
@@ -49,8 +43,8 @@ public class BoidsSimulator {
             var t0 = System.currentTimeMillis();
             administrator.waitThreads();
     
-            if (view.isPresent()) {
-                view.get().update(framerate);
+            if (this.controller.getView() != null) {
+                this.controller.getView().update(framerate);
                 var t1 = System.currentTimeMillis();
                 var dtElapsed = t1 - t0;
                 var frameRatePeriod = 1000 / FRAMERATE;
@@ -89,8 +83,10 @@ public class BoidsSimulator {
     }
 
     public synchronized void stopSimulation() {
+        paused = false;
         running = false;
-        for (Thread thread : threads) {
+        for (BoidThread thread : threads) {
+            thread.stopThread();
             thread.interrupt();
         }
         threads.clear();
@@ -98,18 +94,5 @@ public class BoidsSimulator {
 
     public boolean isPaused() {
         return this.paused;
-    }
-
-    public BoidsModel getModel() {
-        return model;
-    }
-
-    public void reset() {
-        List<Boid> boids = model.getBoids();
-        for (int i = 0; i < numThreads; i++) {
-            threads.add(new BoidThread(getThreadPool(i, boids), this, barrier, administrator));
-        }
-        running = true;
-        runSimulation();
     }
 }
