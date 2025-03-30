@@ -7,12 +7,12 @@ import java.util.concurrent.CyclicBarrier;
 public class BoidThread extends Thread{
     private List<Boid> boids;
     private final BoidsController controller;
-    private final CyclicBarrier barrier;
+    private final CustomCyclicBarrier barrier;
     private final Administrator administrator;
     private volatile boolean stopped;
 
     public BoidThread(final List<Boid> boids, final BoidsController controller,
-                      final CyclicBarrier barrier, final Administrator administrator) {
+                      final CustomCyclicBarrier barrier, final Administrator administrator) {
         assignPool(boids);
         this.controller = controller;
         this.barrier = barrier;

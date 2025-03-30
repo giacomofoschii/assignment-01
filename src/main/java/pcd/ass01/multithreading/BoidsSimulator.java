@@ -9,7 +9,7 @@ public class BoidsSimulator {
 
     private final BoidsController controller;
     private final Administrator administrator;
-    private final CyclicBarrier barrier;
+    private final CustomCyclicBarrier barrier;
     private final int numThreads;
     private final LinkedList<BoidThread> threads;
     private volatile boolean running = true;
@@ -23,7 +23,7 @@ public class BoidsSimulator {
         this.numThreads = Runtime.getRuntime().availableProcessors() + 1;
         this.threads = new LinkedList<>();
         this.administrator = new Administrator(numThreads);
-        this.barrier = new CyclicBarrier(numThreads);
+        this.barrier = new CustomCyclicBarrier(numThreads);
 
         divideBoids();
     }
