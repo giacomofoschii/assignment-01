@@ -57,6 +57,7 @@ public class BoidsSimulator {
                     try {
                         Thread.sleep(frameRatePeriod - dtElapsed);
                     } catch (InterruptedException ex) {
+                        barrier.reset();
                         currentThread().interrupt();
                     }
                     framerate = FRAMERATE;
