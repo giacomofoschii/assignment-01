@@ -1,5 +1,7 @@
 package pcd.ass01.taskexecutor;
 
+import java.util.Random;
+
 public class BoidsSimulation {
 
 	final static int N_BOIDS = 1500;

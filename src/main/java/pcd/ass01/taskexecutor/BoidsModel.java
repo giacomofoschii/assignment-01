@@ -2,6 +2,7 @@ package pcd.ass01.taskexecutor;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class BoidsModel {
     
