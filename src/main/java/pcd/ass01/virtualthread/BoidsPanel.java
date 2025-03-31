@@ -1,4 +1,4 @@
-package pcd.ass01.cleanProject;
+package pcd.ass01.virtualthread;
 
 import javax.swing.*;
 import java.awt.*;
