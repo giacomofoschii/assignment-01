@@ -105,6 +105,7 @@ fabric.properties
 # Package Files #
 *.jar
 !lib/*.jar
+!jpf-runner/build/*.jar
 *.war
 *.nar
 *.ear
