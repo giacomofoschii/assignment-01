@@ -105,7 +105,6 @@ fabric.properties
 # Package Files #
 *.jar
 !lib/*.jar
-!jpf-runner/build/*.jar
 *.war
 *.nar
 *.ear
@@ -120,6 +119,7 @@ replay_pid*
 ### Gradle ###
 .gradle
 **/build/
+!jpf-runner/build/
 !src/**/build/
 
 # Ignore Gradle GUI config
