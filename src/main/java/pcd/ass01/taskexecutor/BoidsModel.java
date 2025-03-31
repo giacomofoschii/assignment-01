@@ -1,8 +1,7 @@
-package pcd.ass01.multithreading;
+package pcd.ass01.taskexecutor;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 public class BoidsModel {
     
@@ -17,7 +16,8 @@ public class BoidsModel {
     private final double avoidRadius;
     private final Random generator;
 
-    public BoidsModel(double initialSeparationWeight,
+    public BoidsModel(int nboids,  
+                      double initialSeparationWeight,
                       double initialAlignmentWeight,
                       double initialCohesionWeight,
                       double width,
@@ -35,77 +35,83 @@ public class BoidsModel {
         this.perceptionRadius = perceptionRadius;
         this.avoidRadius = avoidRadius;
         this.generator = generator;
-
+        
     	boids = new ArrayList<>();
-    }
+        for (int i = 0; i < nboids; i++) {
+        	P2d pos = new P2d(-width/2 + Math.random() * width, -height/2 + Math.random() * height);
+        	V2d vel = new V2d(Math.random() * maxSpeed/2 - maxSpeed/4, Math.random() * maxSpeed/2 - maxSpeed/4);
+        	boids.add(new Boid(pos, vel));
+        }
 
-    public List<Boid> getBoids(){
+    }
+    
+    public synchronized List<Boid> getBoids(){
     	return boids;
     }
     
-    public double getMinX() {
+    public synchronized double getMinX() {
     	return -width/2;
     }
 
-    public double getMaxX() {
+    public synchronized double getMaxX() {
     	return width/2;
     }
 
-    public double getMinY() {
+    public synchronized double getMinY() {
     	return -height/2;
     }
 
-    public double getMaxY() {
+    public synchronized double getMaxY() {
     	return height/2;
     }
     
-    public double getWidth() {
+    public synchronized double getWidth() {
     	return width;
     }
  
-    public double getHeight() {
+    public synchronized double getHeight() {
     	return height;
     }
 
-    public void setSeparationWeight(double value) {
+    public synchronized void setSeparationWeight(double value) {
     	this.separationWeight = value;
     }
 
-    public void setAlignmentWeight(double value) {
+    public synchronized void setAlignmentWeight(double value) {
     	this.alignmentWeight = value;
     }
 
-    public void setCohesionWeight(double value) {
+    public synchronized void setCohesionWeight(double value) {
     	this.cohesionWeight = value;
     }
 
-    public double getSeparationWeight() {
+    public synchronized double getSeparationWeight() {
     	return separationWeight;
     }
 
-    public double getCohesionWeight() {
+    public synchronized double getCohesionWeight() {
     	return cohesionWeight;
     }
 
-    public double getAlignmentWeight() {
+    public synchronized double getAlignmentWeight() {
     	return alignmentWeight;
     }
     
-    public double getMaxSpeed() {
+    public synchronized double getMaxSpeed() {
     	return maxSpeed;
     }
 
-    public double getAvoidRadius() {
+    public synchronized double getAvoidRadius() {
     	return avoidRadius;
     }
 
-    public double getPerceptionRadius() {
+    public synchronized double getPerceptionRadius() {
     	return perceptionRadius;
     }
 
     public void setBoidsNumber(int nBoids) {
         boids.clear();
-        for (int i = 0; i < nBoids; i++) {
+        for(int i = 0; i < nBoids; i++){
             P2d pos = new P2d(-width/2 + generator.nextDouble() * width, -height/2 + generator.nextDouble() * height);
             V2d vel = new V2d(generator.nextDouble() * maxSpeed/2 - maxSpeed/4, generator.nextDouble() * maxSpeed/2 - maxSpeed/4);
             boids.add(new Boid(pos, vel));

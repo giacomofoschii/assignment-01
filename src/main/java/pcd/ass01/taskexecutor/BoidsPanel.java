@@ -1,4 +1,4 @@
-package pcd.ass01.cleanProject;
+package pcd.ass01.taskexecutor;
 
 import javax.swing.*;
 import java.awt.*;

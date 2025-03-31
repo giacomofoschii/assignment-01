@@ -1,4 +1,4 @@
-package pcd.ass01.multithreading;
+package pcd.ass01.taskexecutor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +19,40 @@ public class Boid {
 
     public V2d getVel() {
     	return vel;
+    }
+    
+    public void update(BoidsModel model) {
+
+    	/* change velocity vector according to separation, alignment, cohesion */
+    	
+    	List<Boid> nearbyBoids = getNearbyBoids(model);
+    	
+    	V2d separation = calculateSeparation(nearbyBoids, model);
+    	V2d alignment = calculateAlignment(nearbyBoids, model);
+    	V2d cohesion = calculateCohesion(nearbyBoids, model);
+    	
+    	vel = vel.sum(alignment.mul(model.getAlignmentWeight()))
+    			.sum(separation.mul(model.getSeparationWeight()))
+    			.sum(cohesion.mul(model.getCohesionWeight()));
+        
+        /* Limit speed to MAX_SPEED */
+
+        double speed = vel.abs();
+        
+        if (speed > model.getMaxSpeed()) {
+            vel = vel.getNormalized().mul(model.getMaxSpeed());
+        }
+
+        /* Update position */
+
+        pos = pos.sum(vel);
+        
+        /* environment wrap-around */
+        
+        if (pos.x() < model.getMinX()) pos = pos.sum(new V2d(model.getWidth(), 0));
+        if (pos.x() >= model.getMaxX()) pos = pos.sum(new V2d(-model.getWidth(), 0));
+        if (pos.y() < model.getMinY()) pos = pos.sum(new V2d(0, model.getHeight()));
+        if (pos.y() >= model.getMaxY()) pos = pos.sum(new V2d(0, -model.getHeight()));
     }
 
     public void updateVelocity(BoidsModel model) {
@@ -75,7 +109,7 @@ public class Boid {
     private V2d calculateAlignment(List<Boid> nearbyBoids, BoidsModel model) {
         double avgVx = 0;
         double avgVy = 0;
-        if (!nearbyBoids.isEmpty()) {
+        if (nearbyBoids.size() > 0) {
 	        for (Boid other : nearbyBoids) {
 	        	V2d otherVel = other.getVel();
 	            avgVx += otherVel.x();
@@ -92,7 +126,7 @@ public class Boid {
     private V2d calculateCohesion(List<Boid> nearbyBoids, BoidsModel model) {
         double centerX = 0;
         double centerY = 0;
-        if (!nearbyBoids.isEmpty()) {
+        if (nearbyBoids.size() > 0) {
 	        for (Boid other: nearbyBoids) {
 	        	P2d otherPos = other.getPos();
 	            centerX += otherPos.x();
