@@ -68,7 +68,7 @@ public class BoidsView implements ChangeListener {
 		stopButton.addActionListener(e -> {
 			boidsController.getSimulator().stopSimulation();
 			startPanel();
-			boidsController.newSimulation();
+			boidsController.getSimulator().newSimulation();
 			if(!isRunning) {
 				pauseButton.setText("Pause");
 				isRunning = true;
@@ -97,6 +97,7 @@ public class BoidsView implements ChangeListener {
 			String input = JOptionPane.showInputDialog(frame, "Insert boids' number",
 					"Boids' number", JOptionPane.QUESTION_MESSAGE);
 			if(input == null) {
+				this.boidsController.getSimulator().stopExecutor();
 				frame.dispose();
 				System.exit(0);
 			}

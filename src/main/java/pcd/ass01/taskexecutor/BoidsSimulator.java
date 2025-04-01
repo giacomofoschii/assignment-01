@@ -7,8 +7,8 @@ import java.util.concurrent.*;
 public class BoidsSimulator {
 
     private final BoidsController boidsController;
-    private final int numThreads;
-    private final ExecutorService executor;
+    private int numThreads;
+    private ExecutorService executor;
     private volatile boolean running = true;
     private volatile boolean paused = false;
     private List<List<Boid>> boidsList;
@@ -36,10 +36,13 @@ public class BoidsSimulator {
                     }
                 }
             }
+            if (!this.running) {
+                break;
+            }
 
             CustomCountDownLatch velocityLatch = new CustomCountDownLatchImpl(boidsList.size());
             for (List<Boid> boids : boidsList) {
-                this.executor.submit(new UpdateVelocityTask(velocityLatch, boids, boidsController.getModel()));
+                this.executor.execute(new UpdateVelocityTask(velocityLatch, boids, boidsController.getModel()));
             }
             try {
                 velocityLatch.await();
@@ -49,7 +52,7 @@ public class BoidsSimulator {
 
             CustomCountDownLatch positionLatch = new CustomCountDownLatchImpl(boidsList.size());
             for (List<Boid> boids : boidsList) {
-                this.executor.submit(new UpdatePositionTask(positionLatch, boids, boidsController.getModel()));
+                this.executor.execute(new UpdatePositionTask(positionLatch, boids, boidsController.getModel()));
             }
             try {
                 positionLatch.await();
@@ -79,6 +82,11 @@ public class BoidsSimulator {
     	}
     }
 
+    public void newSimulation() {
+        this.running = true;
+        new Thread(this::runSimulation).start();
+    }
+
     public synchronized void pauseSimulation() {
         this.paused = true;
     }
@@ -102,9 +110,7 @@ public class BoidsSimulator {
         this.boidsList = boidsList;
     }
 
-    public synchronized void stopSimulation() {
-        this.running = false;
-        this.paused = false;
+    public void stopExecutor() {
         this.executor.shutdown();
         try {
             if (!this.executor.awaitTermination(60, TimeUnit.SECONDS)) {
@@ -114,5 +120,11 @@ public class BoidsSimulator {
             this.executor.shutdownNow();
             Thread.currentThread().interrupt();
         }
+    }
+
+    public synchronized void stopSimulation() {
+        this.running = false;
+        this.paused = false;
+        notify();
     }
 }
