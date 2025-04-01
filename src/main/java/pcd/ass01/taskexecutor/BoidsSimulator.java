@@ -4,8 +4,8 @@ import java.util.concurrent.*;
 
 public class BoidsSimulator {
 
-    private BoidsController boidsController;
-    private final MyExecutor executor;
+    private final BoidsController boidsController;
+    private final ExecutorService executor;
     private boolean running = true;
 
     private static final int FRAMERATE = 25;
@@ -13,22 +13,32 @@ public class BoidsSimulator {
     
     public BoidsSimulator(final BoidsController boidsController) {
         this.boidsController = boidsController;
-        this.executor = (MyExecutor) Executors.newCachedThreadPool();
+        this.executor = Executors.newCachedThreadPool();
     }
 
     public void runSimulation() {
     	while (running) {
+            CustomCountDownLatch velocityLatch = new CustomCountDownLatchImpl(boidsController.getModel().getBoids().size());
+            for (Boid boid : boidsController.getModel().getBoids()) {
+                executor.submit(new UpdateVelocityTask(velocityLatch, boid, boidsController.getModel()));
+            }
+            try {
+                velocityLatch.await();
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+
+            CustomCountDownLatch positionLatch = new CustomCountDownLatchImpl(boidsController.getModel().getBoids().size());
+            for (Boid boid : boidsController.getModel().getBoids()) {
+                executor.submit(new UpdatePositionTask(positionLatch, boid, boidsController.getModel()));
+            }
+            try {
+                positionLatch.await();
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+
             var t0 = System.currentTimeMillis();
-    		var boids = boidsController.getModel().getBoids();
-
-            for (Boid boid : boids) {
-               boid.updateVelocity(boidsController.getModel());
-            }
-
-            for (Boid boid : boids) {
-                boid.updatePos(boidsController.getModel());
-            }
-
             if (boidsController.getView() != null) {
                 boidsController.getView().update(framerate);
                 var t1 = System.currentTimeMillis();
@@ -52,5 +62,6 @@ public class BoidsSimulator {
 
     public void stopSimulation() {
         running = false;
+        executor.shutdown();
     }
 }

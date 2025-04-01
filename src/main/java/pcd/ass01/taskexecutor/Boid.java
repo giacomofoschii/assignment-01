@@ -3,7 +3,7 @@ package pcd.ass01.taskexecutor;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Boid implements Runnable {
+public class Boid {
 
     private P2d pos;
     private V2d vel;
@@ -126,10 +126,5 @@ public class Boid implements Runnable {
         } else {
         	return new V2d(0, 0);
         }
-    }
-
-    @Override
-    public void run() {
-
     }
 }
