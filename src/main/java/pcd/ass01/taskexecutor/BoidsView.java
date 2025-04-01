@@ -123,10 +123,10 @@ public class BoidsView implements ChangeListener {
 		slider.setMinorTickSpacing(1);
 		slider.setPaintTicks(true);
 		slider.setPaintLabels(true);
-		Hashtable labelTable = new Hashtable<>();
-		labelTable.put( 0, new JLabel("0") );
-		labelTable.put( 10, new JLabel("1") );
-		labelTable.put( 20, new JLabel("2") );
+		Hashtable<Integer, JLabel> labelTable = new Hashtable<>();
+		labelTable.put(0, new JLabel("0"));
+		labelTable.put(10, new JLabel("1"));
+		labelTable.put(20, new JLabel("2"));
 		slider.setLabelTable( labelTable );
 		slider.setPaintLabels(true);
         slider.addChangeListener(this);
