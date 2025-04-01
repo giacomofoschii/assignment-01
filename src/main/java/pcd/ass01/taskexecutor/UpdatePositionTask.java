@@ -18,8 +18,7 @@ public class UpdatePositionTask implements Runnable {
     public void run() {
         for(Boid boid : this.boids) {
             boid.updatePos(model);
+            this.latch.countDown();
         }
-        this.latch.countDown();
-
     }
 }
