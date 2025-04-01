@@ -1,19 +1,23 @@
 package pcd.ass01.taskexecutor;
 
+import java.util.List;
+
 public class UpdateVelocityTask implements Runnable {
     private final CustomCountDownLatch latch;
-    private final Boid boid;
+    private final List<Boid> boids;
     private final BoidsModel model;
 
-    public UpdateVelocityTask(CustomCountDownLatch latch, Boid boid, BoidsModel model) {
+    public UpdateVelocityTask(CustomCountDownLatch latch, List<Boid> boids, BoidsModel model) {
         this.latch = latch;
-        this.boid = boid;
+        this.boids = boids;
         this.model = model;
     }
 
     @Override
     public void run() {
-        this.boid.updateVelocity(model);
+        for(Boid boid : this.boids) {
+            boid.updateVelocity(model);
+        }
         this.latch.countDown();
 
     }

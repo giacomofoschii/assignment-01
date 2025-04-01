@@ -1,10 +1,13 @@
 package pcd.ass01.taskexecutor;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.*;
 
 public class BoidsSimulator {
 
     private final BoidsController boidsController;
+    private final int numThreads;
     private final ExecutorService executor;
     private boolean running = true;
 
@@ -13,14 +16,17 @@ public class BoidsSimulator {
     
     public BoidsSimulator(final BoidsController boidsController) {
         this.boidsController = boidsController;
-        this.executor = Executors.newCachedThreadPool();
+        this.numThreads = Runtime.getRuntime().availableProcessors() + 1;
+        this.executor = Executors.newFixedThreadPool(numThreads);
     }
 
     public void runSimulation() {
     	while (running) {
+            List<List<Boid>> boidsList = this.divideBoids(this.boidsController.getModel().getBoids(), this.numThreads);
+
             CustomCountDownLatch velocityLatch = new CustomCountDownLatchImpl(boidsController.getModel().getBoids().size());
-            for (Boid boid : boidsController.getModel().getBoids()) {
-                executor.submit(new UpdateVelocityTask(velocityLatch, boid, boidsController.getModel()));
+            for (List<Boid> boids : boidsList) {
+                executor.submit(new UpdateVelocityTask(velocityLatch, boids, boidsController.getModel()));
             }
             try {
                 velocityLatch.await();
@@ -29,8 +35,8 @@ public class BoidsSimulator {
             }
 
             CustomCountDownLatch positionLatch = new CustomCountDownLatchImpl(boidsController.getModel().getBoids().size());
-            for (Boid boid : boidsController.getModel().getBoids()) {
-                executor.submit(new UpdatePositionTask(positionLatch, boid, boidsController.getModel()));
+            for (List<Boid> boids : boidsList) {
+                executor.submit(new UpdatePositionTask(positionLatch, boids, boidsController.getModel()));
             }
             try {
                 positionLatch.await();
@@ -58,6 +64,22 @@ public class BoidsSimulator {
             }
             
     	}
+    }
+
+    private List<List<Boid>> divideBoids(List<Boid> boids, int activeThreads) {
+        List<List<Boid>> boidsList = new ArrayList<>();
+        int boidsPerThread = boids.size() / activeThreads;
+        int remainingBoids = boids.size() % activeThreads;
+
+        System.out.println("Boids: " + boids.size() + ", Threads: " + activeThreads + ", Boids per thread: " + boidsPerThread + ", Remaining boids: " + remainingBoids);
+
+        int startIndex = 0;
+        for (int i = 0; i < activeThreads; i++) {
+            int endIndex = startIndex + boidsPerThread + (i < remainingBoids ? 1 : 0);
+            boidsList.add(boids.subList(startIndex, endIndex));
+            startIndex = endIndex;
+        }
+        return boidsList;
     }
 
     public void stopSimulation() {
