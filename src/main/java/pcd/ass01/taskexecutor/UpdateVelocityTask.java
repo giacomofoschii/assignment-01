@@ -17,8 +17,9 @@ public class UpdateVelocityTask implements Runnable {
     public void run() {
         for(Boid boid : this.boids) {
             boid.updateVelocity(model);
-            this.latch.countDown();
         }
+        this.latch.countDown();
+
     }
 
 }
