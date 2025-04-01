@@ -13,12 +13,11 @@ public class BoidsView implements ChangeListener {
 	private JSlider cohesionSlider, separationSlider, alignmentSlider;
 	private JButton pauseButton, stopButton;
 	private boolean isRunning;
-	private BoidsModel model;
-	private BoidsSimulator simulator;
+	private BoidsController boidsController;
 	private int width, height;
 	
-	public BoidsView(BoidsModel model, int width, int height) {
-		this.model = model;
+	public BoidsView(final BoidsController boidsController, final int width, final int height) {
+		this.boidsController = boidsController;
 		this.width = width;
 		this.height = height;
 		this.isRunning = false;
@@ -31,7 +30,7 @@ public class BoidsView implements ChangeListener {
 		LayoutManager layout = new BorderLayout();
 		cp.setLayout(layout);
 
-        boidsPanel = new BoidsPanel(this, model);
+        boidsPanel = new BoidsPanel(this, this.boidsController.getModel());
 		cp.add(BorderLayout.CENTER, boidsPanel);
 
         JPanel controlPanel = getNewControlPanel();
@@ -144,13 +143,13 @@ public class BoidsView implements ChangeListener {
 	public void stateChanged(ChangeEvent e) {
 		if (e.getSource() == separationSlider) {
 			var val = separationSlider.getValue();
-			model.setSeparationWeight(0.1*val);
+			this.boidsController.getModel().setSeparationWeight(0.1*val);
 		} else if (e.getSource() == cohesionSlider) {
 			var val = cohesionSlider.getValue();
-			model.setCohesionWeight(0.1*val);
+			this.boidsController.getModel().setCohesionWeight(0.1*val);
 		} else {
 			var val = alignmentSlider.getValue();
-			model.setAlignmentWeight(0.1*val);
+			this.boidsController.getModel().setAlignmentWeight(0.1*val);
 		}
 	}
 	

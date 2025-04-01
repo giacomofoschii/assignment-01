@@ -4,22 +4,16 @@ import java.util.Optional;
 
 public class BoidsSimulator {
 
-    private BoidsModel model;
-    private Optional<BoidsView> view;
+    private BoidsController boidsController;
     private boolean running = true;
 
     private static final int FRAMERATE = 25;
     private int framerate;
     
-    public BoidsSimulator(BoidsModel model) {
-        this.model = model;
-        view = Optional.empty();
+    public BoidsSimulator(final BoidsController boidsController) {
+        this.boidsController = boidsController;
     }
 
-    public void attachView(BoidsView view) {
-    	this.view = Optional.of(view);
-    }
-      
     public void runSimulation() {
     	while (running) {
             var t0 = System.currentTimeMillis();
