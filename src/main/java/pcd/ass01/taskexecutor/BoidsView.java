@@ -34,30 +34,7 @@ public class BoidsView implements ChangeListener {
         boidsPanel = new BoidsPanel(this, model);
 		cp.add(BorderLayout.CENTER, boidsPanel);
 
-        JPanel controlPanel = new JPanel();
-
-		stopButton = new JButton("Stop");
-		pauseButton = new JButton("Pause");
-
-		pauseButton.addActionListener( e -> {
-			if (isRunning) {
-				simulator.pauseSimulation();
-				pauseButton.setText("Resume");
-			} else {
-				simulator.resumeSimulation();
-				pauseButton.setText("Pause");
-			}
-			isRunning = !isRunning;
-		});
-
-		stopButton.addActionListener( e -> {
-			simulator.stopSimulation();
-			frame.dispose();
-			System.exit(0);
-		});
-
-		controlPanel.add(stopButton);
-		controlPanel.add(pauseButton);
+        JPanel controlPanel = getNewControlPanel();
 
 		cp.add(BorderLayout.NORTH, controlPanel);
 
@@ -80,29 +57,67 @@ public class BoidsView implements ChangeListener {
 		
         frame.setVisible(true);
 
+		startPanel();
+	}
+
+
+	private JPanel getNewControlPanel() {
+		JPanel controlPanel = new JPanel();
+
+		JButton pauseButton = new JButton("Pause");
+		JButton stopButton = new JButton("Stop");
+
+		stopButton.addActionListener(e -> {
+			//#TODO stop simulation
+			startPanel();
+			//#TODO resume simulation
+			if(!isRunning) {
+				pauseButton.setText("Pause");
+				isRunning = true;
+			}
+		});
+
+		pauseButton.addActionListener(e -> {
+			if (isRunning) {
+				//#TODO resume simulation
+				pauseButton.setText("Resume");
+			} else {
+				//#TODO pause simulation
+				pauseButton.setText("Pause");
+			}
+			isRunning = !isRunning;
+		});
+
+		controlPanel.add(stopButton);
+		controlPanel.add(pauseButton);
+		return controlPanel;
+	}
+
+	private void startPanel() {
 		boolean starting = false;
-		while (!starting) {
-			String input = JOptionPane.showInputDialog(frame, "Inserisci il numero di boids:",
-					"Numero di boids", JOptionPane.QUESTION_MESSAGE);
-			if (input == null) {
+		while(!starting) {
+			String input = JOptionPane.showInputDialog(frame, "Insert boids' number",
+					"Boids' number", JOptionPane.QUESTION_MESSAGE);
+			if(input == null) {
 				frame.dispose();
-				throw new IllegalArgumentException("Numero di boids null");
+				System.exit(0);
 			}
 			try {
 				int nBoids = Integer.parseInt(input);
 				if (nBoids > 0) {
-					model.setBoidsNumber(nBoids);
+					//this.boidsController.getModel().setBoidsNumber(nBoids);
 					starting = true;
 				} else {
-					JOptionPane.showMessageDialog(frame, "Il numero di boids deve essere positivo",
+					JOptionPane.showMessageDialog(frame, "Boids' number must be positive",
 							"Errore di input", JOptionPane.ERROR_MESSAGE);
 				}
-			} catch (NumberFormatException e) {
-				JOptionPane.showMessageDialog(frame, "Inserisci un numero intero positivo", "Errore",
-						JOptionPane.ERROR_MESSAGE);
+			} catch (NumberFormatException ex) {
+				JOptionPane.showMessageDialog(frame, "Letters or symbols not allowed, insert a valid number!",
+						"Errore di input", JOptionPane.ERROR_MESSAGE);
 			}
 		}
 	}
+
 
 	private JSlider makeSlider() {
 		var slider = new JSlider(JSlider.HORIZONTAL, 0, 20, 10);        

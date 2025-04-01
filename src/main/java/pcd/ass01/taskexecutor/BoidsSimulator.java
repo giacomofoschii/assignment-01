@@ -7,8 +7,7 @@ public class BoidsSimulator {
     private BoidsModel model;
     private Optional<BoidsView> view;
     private boolean running = true;
-    private boolean paused = false;
-    
+
     private static final int FRAMERATE = 25;
     private int framerate;
     
@@ -68,13 +67,5 @@ public class BoidsSimulator {
 
     public void stopSimulation() {
         running = false;
-    }
-
-    public void pauseSimulation() {
-        this.paused = true;
-    }
-
-    public void resumeSimulation() {
-        this.paused = false;
     }
 }
