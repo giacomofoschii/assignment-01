@@ -7,8 +7,8 @@ import java.util.concurrent.*;
 public class BoidsSimulator {
 
     private final BoidsController boidsController;
-    private int numThreads;
-    private ExecutorService executor;
+    private final int numThreads;
+    private final ExecutorService executor;
     private volatile boolean running = true;
     private volatile boolean paused = false;
     private List<List<Boid>> boidsList;
