@@ -8,12 +8,12 @@ import java.util.Hashtable;
 
 public class BoidsView implements ChangeListener {
 
-	private JFrame frame;
-	private BoidsPanel boidsPanel;
-	private JSlider cohesionSlider, separationSlider, alignmentSlider;
+	private final JFrame frame;
+	private final BoidsPanel boidsPanel;
+	private final JSlider cohesionSlider, separationSlider, alignmentSlider;
 	private boolean isRunning;
-	private BoidsController boidsController;
-	private int width, height;
+	private final BoidsController boidsController;
+	private final int width, height;
 	
 	public BoidsView(final BoidsController boidsController, final int width, final int height) {
 		this.boidsController = boidsController;
@@ -91,7 +91,7 @@ public class BoidsView implements ChangeListener {
 		return controlPanel;
 	}
 
-	private void startPanel() {
+	private void startPanel(){
 		boolean starting = false;
 		while(!starting) {
 			String input = JOptionPane.showInputDialog(frame, "Insert boids' number",

@@ -18,7 +18,7 @@ public class BoidsController {
     private BoidsModel model;
     private BoidsView view;
 
-    public void inizialize() {
+    public void initialize() {
         this.model = new BoidsModel(
                 SEPARATION_WEIGHT, ALIGNMENT_WEIGHT, COHESION_WEIGHT,
                 ENVIRONMENT_WIDTH, ENVIRONMENT_HEIGHT,
