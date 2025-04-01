@@ -26,7 +26,7 @@ public class BoidsSimulator {
         divideBoids(boidsController.getModel().getBoids(), numThreads);
 
         while (running) {
-            CustomCountDownLatch velocityLatch = new CustomCountDownLatchImpl(boidsController.getModel().getBoids().size());
+            CustomCountDownLatch velocityLatch = new CustomCountDownLatchImpl(boidsList.size());
             for (List<Boid> boids : boidsList) {
                 executor.submit(new UpdateVelocityTask(velocityLatch, boids, boidsController.getModel()));
             }
@@ -36,7 +36,7 @@ public class BoidsSimulator {
                 Thread.currentThread().interrupt();
             }
 
-            CustomCountDownLatch positionLatch = new CustomCountDownLatchImpl(boidsController.getModel().getBoids().size());
+            CustomCountDownLatch positionLatch = new CustomCountDownLatchImpl(boidsList.size());
             for (List<Boid> boids : boidsList) {
                 executor.submit(new UpdatePositionTask(positionLatch, boids, boidsController.getModel()));
             }
@@ -93,5 +93,13 @@ public class BoidsSimulator {
     public void stopSimulation() {
         running = false;
         executor.shutdown();
+        try {
+            if (!executor.awaitTermination(60, TimeUnit.SECONDS)) {
+                executor.shutdownNow();
+            }
+        } catch (InterruptedException ex) {
+            executor.shutdownNow();
+            Thread.currentThread().interrupt();
+        }
     }
 }

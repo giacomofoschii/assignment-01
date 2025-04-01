@@ -20,6 +20,5 @@ public class UpdatePositionTask implements Runnable {
             boid.updatePos(model);
         }
         this.latch.countDown();
-
     }
 }
