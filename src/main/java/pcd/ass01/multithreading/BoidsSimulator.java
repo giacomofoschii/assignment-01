@@ -1,7 +1,6 @@
 package pcd.ass01.multithreading;
 
 import java.util.*;
-import java.util.concurrent.CyclicBarrier;
 
 import static java.lang.Thread.currentThread;
 
@@ -23,7 +22,7 @@ public class BoidsSimulator {
         this.numThreads = Runtime.getRuntime().availableProcessors() + 1;
         this.threads = new LinkedList<>();
         this.administrator = new Administrator(numThreads);
-        this.barrier = new CustomCyclicBarrier(numThreads);
+        this.barrier = new CustomCyclicBarrierImpl(numThreads);
 
         divideBoids();
     }

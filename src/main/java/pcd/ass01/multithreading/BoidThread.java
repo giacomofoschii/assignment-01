@@ -2,7 +2,6 @@ package pcd.ass01.multithreading;
 
 import java.util.List;
 import java.util.concurrent.BrokenBarrierException;
-import java.util.concurrent.CyclicBarrier;
 
 public class BoidThread extends Thread{
     private List<Boid> boids;
