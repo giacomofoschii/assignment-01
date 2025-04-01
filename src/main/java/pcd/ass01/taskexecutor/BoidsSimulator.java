@@ -1,8 +1,11 @@
 package pcd.ass01.taskexecutor;
 
+import java.util.concurrent.*;
+
 public class BoidsSimulator {
 
     private BoidsController boidsController;
+    private final MyExecutor executor;
     private boolean running = true;
 
     private static final int FRAMERATE = 25;
@@ -10,6 +13,7 @@ public class BoidsSimulator {
     
     public BoidsSimulator(final BoidsController boidsController) {
         this.boidsController = boidsController;
+        this.executor = (MyExecutor) Executors.newCachedThreadPool();
     }
 
     public void runSimulation() {
@@ -17,11 +21,11 @@ public class BoidsSimulator {
             var t0 = System.currentTimeMillis();
     		var boids = boidsController.getModel().getBoids();
 
-            for (BoidTask boid : boids) {
-                boid.updateVelocity(boidsController.getModel());
+            for (Boid boid : boids) {
+               boid.updateVelocity(boidsController.getModel());
             }
 
-            for (BoidTask boid : boids) {
+            for (Boid boid : boids) {
                 boid.updatePos(boidsController.getModel());
             }
 
