@@ -19,7 +19,7 @@ public class BoidsView implements ChangeListener {
 		this.boidsController = boidsController;
 		this.width = width;
 		this.height = height;
-		this.isRunning = false;
+		this.isRunning = true;
 		
 		frame = new JFrame("Boids Simulation");
         frame.setSize(width, height);
@@ -70,7 +70,6 @@ public class BoidsView implements ChangeListener {
 			startPanel();
 			boidsController.newSimulation();
 			if(!isRunning) {
-				boidsController.getSimulator().resumeSimulation();
 				pauseButton.setText("Pause");
 				isRunning = true;
 			}

@@ -9,7 +9,8 @@ public class BoidsSimulator {
     private final BoidsController boidsController;
     private final int numThreads;
     private final ExecutorService executor;
-    private boolean running = true;
+    private volatile boolean running = true;
+    private volatile boolean paused = false;
     private List<List<Boid>> boidsList;
 
     private static final int FRAMERATE = 25;
@@ -25,10 +26,20 @@ public class BoidsSimulator {
     public void runSimulation() {
         divideBoids(boidsController.getModel().getBoids(), numThreads);
 
-        while (running) {
+        while (this.running) {
+            synchronized (this) {
+                while (this.paused) {
+                    try {
+                        wait();
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                    }
+                }
+            }
+
             CustomCountDownLatch velocityLatch = new CustomCountDownLatchImpl(boidsList.size());
             for (List<Boid> boids : boidsList) {
-                executor.submit(new UpdateVelocityTask(velocityLatch, boids, boidsController.getModel()));
+                this.executor.submit(new UpdateVelocityTask(velocityLatch, boids, boidsController.getModel()));
             }
             try {
                 velocityLatch.await();
@@ -38,7 +49,7 @@ public class BoidsSimulator {
 
             CustomCountDownLatch positionLatch = new CustomCountDownLatchImpl(boidsList.size());
             for (List<Boid> boids : boidsList) {
-                executor.submit(new UpdatePositionTask(positionLatch, boids, boidsController.getModel()));
+                this.executor.submit(new UpdatePositionTask(positionLatch, boids, boidsController.getModel()));
             }
             try {
                 positionLatch.await();
@@ -68,12 +79,13 @@ public class BoidsSimulator {
     	}
     }
 
-    public void pauseSimulation() {
-        running = false;
+    public synchronized void pauseSimulation() {
+        this.paused = true;
     }
 
-    public void resumeSimulation() {
-        running = true;
+    public synchronized void resumeSimulation() {
+        this.paused = false;
+        notify();
     }
 
     private void divideBoids(List<Boid> boids, int activeThreads) {
@@ -90,15 +102,16 @@ public class BoidsSimulator {
         this.boidsList = boidsList;
     }
 
-    public void stopSimulation() {
-        running = false;
-        executor.shutdown();
+    public synchronized void stopSimulation() {
+        this.running = false;
+        this.paused = false;
+        this.executor.shutdown();
         try {
-            if (!executor.awaitTermination(60, TimeUnit.SECONDS)) {
-                executor.shutdownNow();
+            if (!this.executor.awaitTermination(60, TimeUnit.SECONDS)) {
+                this.executor.shutdownNow();
             }
         } catch (InterruptedException ex) {
-            executor.shutdownNow();
+            this.executor.shutdownNow();
             Thread.currentThread().interrupt();
         }
     }

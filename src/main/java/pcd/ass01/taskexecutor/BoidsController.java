@@ -31,7 +31,8 @@ public class BoidsController {
     }
 
     public void newSimulation() {
-        new Thread(() -> this.simulator.runSimulation()).start();
+        new Thread(() -> this.simulator = new BoidsSimulator(this)).start();
+        this.simulator.runSimulation();
     }
 
     public BoidsSimulator getSimulator() {
