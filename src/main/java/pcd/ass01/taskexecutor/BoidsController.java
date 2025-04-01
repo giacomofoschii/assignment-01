@@ -27,8 +27,11 @@ public class BoidsController {
                 AVOID_RADIUS);
         this.view = new BoidsView(this, SCREEN_WIDTH, SCREEN_HEIGHT);
         this.simulator = new BoidsSimulator(this);
-        //TODO: Add startTasks.
         this.simulator.runSimulation();
+    }
+
+    public void newSimulation() {
+        new Thread(() -> this.simulator.runSimulation()).start();
     }
 
     public BoidsSimulator getSimulator() {

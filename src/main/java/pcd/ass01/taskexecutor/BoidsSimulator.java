@@ -10,6 +10,7 @@ public class BoidsSimulator {
     private final int numThreads;
     private final ExecutorService executor;
     private boolean running = true;
+    private List<List<Boid>> boidsList;
 
     private static final int FRAMERATE = 25;
     private int framerate;
@@ -18,12 +19,13 @@ public class BoidsSimulator {
         this.boidsController = boidsController;
         this.numThreads = Runtime.getRuntime().availableProcessors() + 1;
         this.executor = Executors.newFixedThreadPool(numThreads);
+        this.boidsList = new ArrayList<>();
     }
 
     public void runSimulation() {
-    	while (running) {
-            List<List<Boid>> boidsList = this.divideBoids(this.boidsController.getModel().getBoids(), this.numThreads);
+        divideBoids(boidsController.getModel().getBoids(), numThreads);
 
+        while (running) {
             CustomCountDownLatch velocityLatch = new CustomCountDownLatchImpl(boidsController.getModel().getBoids().size());
             for (List<Boid> boids : boidsList) {
                 executor.submit(new UpdateVelocityTask(velocityLatch, boids, boidsController.getModel()));
@@ -66,7 +68,15 @@ public class BoidsSimulator {
     	}
     }
 
-    private List<List<Boid>> divideBoids(List<Boid> boids, int activeThreads) {
+    public void pauseSimulation() {
+        running = false;
+    }
+
+    public void resumeSimulation() {
+        running = true;
+    }
+
+    private void divideBoids(List<Boid> boids, int activeThreads) {
         List<List<Boid>> boidsList = new ArrayList<>();
         int boidsPerThread = boids.size() / activeThreads;
         int remainingBoids = boids.size() % activeThreads;
@@ -79,7 +89,7 @@ public class BoidsSimulator {
             boidsList.add(boids.subList(startIndex, endIndex));
             startIndex = endIndex;
         }
-        return boidsList;
+        this.boidsList = boidsList;
     }
 
     public void stopSimulation() {

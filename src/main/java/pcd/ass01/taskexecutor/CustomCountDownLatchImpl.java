@@ -14,7 +14,7 @@ public class CustomCountDownLatchImpl implements CustomCountDownLatch {
     }
 
     @Override
-    public void await() throws InterruptedException {
+    public void await() {
         lock.lock();
         try {
             while (waitingTasks > 0) {
@@ -53,6 +53,4 @@ public class CustomCountDownLatchImpl implements CustomCountDownLatch {
             lock.unlock();
         }
     }
-
-
 }
