@@ -71,8 +71,6 @@ public class BoidsSimulator {
         int boidsPerThread = boids.size() / activeThreads;
         int remainingBoids = boids.size() % activeThreads;
 
-        System.out.println("Boids: " + boids.size() + ", Threads: " + activeThreads + ", Boids per thread: " + boidsPerThread + ", Remaining boids: " + remainingBoids);
-
         int startIndex = 0;
         for (int i = 0; i < activeThreads; i++) {
             int endIndex = startIndex + boidsPerThread + (i < remainingBoids ? 1 : 0);
