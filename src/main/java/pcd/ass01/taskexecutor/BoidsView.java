@@ -11,7 +11,6 @@ public class BoidsView implements ChangeListener {
 	private JFrame frame;
 	private BoidsPanel boidsPanel;
 	private JSlider cohesionSlider, separationSlider, alignmentSlider;
-	private JButton pauseButton, stopButton;
 	private boolean isRunning;
 	private BoidsController boidsController;
 	private int width, height;
@@ -104,7 +103,7 @@ public class BoidsView implements ChangeListener {
 			try {
 				int nBoids = Integer.parseInt(input);
 				if (nBoids > 0) {
-					//this.boidsController.getModel().setBoidsNumber(nBoids);
+					this.boidsController.getModel().setBoidsNumber(nBoids);
 					starting = true;
 				} else {
 					JOptionPane.showMessageDialog(frame, "Boids' number must be positive",
@@ -160,9 +159,4 @@ public class BoidsView implements ChangeListener {
 	public int getHeight() {
 		return height;
 	}
-
-	public void setSimulator(BoidsSimulator simulator) {
-		this.simulator = simulator;
-	}
-
 }
