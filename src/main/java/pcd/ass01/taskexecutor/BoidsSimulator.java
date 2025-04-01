@@ -1,7 +1,5 @@
 package pcd.ass01.taskexecutor;
 
-import java.util.Optional;
-
 public class BoidsSimulator {
 
     private BoidsController boidsController;
@@ -19,11 +17,11 @@ public class BoidsSimulator {
             var t0 = System.currentTimeMillis();
     		var boids = boidsController.getModel().getBoids();
 
-            for (Boid boid : boids) {
+            for (BoidTask boid : boids) {
                 boid.updateVelocity(boidsController.getModel());
             }
 
-            for (Boid boid : boids) {
+            for (BoidTask boid : boids) {
                 boid.updatePos(boidsController.getModel());
             }
 

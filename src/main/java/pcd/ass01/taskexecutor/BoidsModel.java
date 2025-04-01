@@ -2,11 +2,10 @@ package pcd.ass01.taskexecutor;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 public class BoidsModel {
     
-    private final List<Boid> boids;
+    private final List<BoidTask> boids;
     private double separationWeight; 
     private double alignmentWeight; 
     private double cohesionWeight; 
@@ -35,7 +34,7 @@ public class BoidsModel {
         this.boids = new ArrayList<>();
     }
     
-    public synchronized List<Boid> getBoids(){
+    public synchronized List<BoidTask> getBoids(){
     	return boids;
     }
     
@@ -104,7 +103,7 @@ public class BoidsModel {
         for (int i = 0; i < nboids; i++) {
             P2d pos = new P2d(-width/2 + Math.random() * width, -height/2 + Math.random() * height);
             V2d vel = new V2d(Math.random() * maxSpeed/2 - maxSpeed/4, Math.random() * maxSpeed/2 - maxSpeed/4);
-            boids.add(new Boid(pos, vel));
+            boids.add(new BoidTask(pos, vel));
         }
     }
 }
