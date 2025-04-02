@@ -1,10 +1,10 @@
-package pcd.ass01.multithreading;
+package pcd.ass01.virtualthread;
 
 import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
-public class CustomCyclicBarrierImpl implements CustomCyclicBarrier{
+public class CustomCyclicBarrierImpl implements CustomCyclicBarrier {
 
     private final int waitingThreadNum;
     private int arrivedThreadNum;
