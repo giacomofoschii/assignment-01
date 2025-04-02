@@ -1,8 +1,5 @@
 package pcd.ass01.taskexecutor;
 
-import java.util.concurrent.locks.Condition;
-import java.util.concurrent.locks.ReentrantLock;
-
 public class CustomCountDownLatchImpl implements CustomCountDownLatch {
     private int waitingTasks;
 
@@ -30,10 +27,5 @@ public class CustomCountDownLatchImpl implements CustomCountDownLatch {
                 notifyAll();
             }
         }
-    }
-
-    @Override
-    public synchronized int getCount() {
-        return waitingTasks;
     }
 }

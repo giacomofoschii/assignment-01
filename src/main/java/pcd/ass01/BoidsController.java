@@ -31,11 +31,11 @@ public abstract class BoidsController {
 
     public synchronized void pauseSimulation() {
         this.paused = true;
-    };
+    }
 
     public BoidsModel getModel() {
         return this.model;
-    };
+    }
 
     public void updateView() {
         var t0 = System.currentTimeMillis();
@@ -57,5 +57,5 @@ public abstract class BoidsController {
                 framerate = (int) (1000 / dtElapsed);
             }
         }
-    };
+    }
 }

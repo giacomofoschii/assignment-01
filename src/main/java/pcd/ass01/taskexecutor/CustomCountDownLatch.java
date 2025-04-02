@@ -4,6 +4,4 @@ public interface CustomCountDownLatch {
     void await() throws InterruptedException;
 
     void countDown();
-
-    int getCount();
 }
