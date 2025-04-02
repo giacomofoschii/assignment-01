@@ -18,6 +18,7 @@ public class TaskController extends BoidsController {
         this.boidsList = new ArrayList<>();
     }
 
+    @Override
     public void runSimulation() {
         divideBoids(model.getBoids(), numThreads);
 
@@ -59,12 +60,14 @@ public class TaskController extends BoidsController {
         }
     }
 
+    @Override
     public void newSimulation() {
         this.running = true;
         this.executor = Executors.newFixedThreadPool(numThreads);
         new Thread(this::runSimulation).start();
     }
 
+    @Override
     public synchronized void resumeSimulation() {
         this.paused = false;
         notify();
@@ -96,6 +99,7 @@ public class TaskController extends BoidsController {
         }
     }
 
+    @Override
     public synchronized void stopSimulation() {
         this.running = false;
         this.paused = false;
