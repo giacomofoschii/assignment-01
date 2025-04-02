@@ -1,3 +1,4 @@
+
 /*
  *   V2d.java
  *
@@ -7,7 +8,7 @@
  * Use is subject to license terms.
  *
  */
-package pcd.ass01.taskexecutor;
+package pcd.ass01;
 
 /**
  *
@@ -37,5 +38,5 @@ public record V2d(double x,double y) {
     public String toString(){
         return "V2d("+x+","+y+")";
     }
-    
+
 }

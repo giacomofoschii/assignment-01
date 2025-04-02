@@ -1,30 +1,29 @@
 package pcd.ass01.taskexecutor;
 
+import pcd.ass01.Boid;
+import pcd.ass01.BoidsSimulator;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.*;
 
-public class BoidsSimulator {
+public class TaskSimulator extends BoidsSimulator {
 
-    private final BoidsController boidsController;
-    private final int numThreads;
-    private final ExecutorService executor;
-    private volatile boolean running = true;
-    private volatile boolean paused = false;
+    private final TaskController taskController;
+    private ExecutorService executor;
     private List<List<Boid>> boidsList;
 
     private static final int FRAMERATE = 25;
     private int framerate;
     
-    public BoidsSimulator(final BoidsController boidsController) {
-        this.boidsController = boidsController;
-        this.numThreads = Runtime.getRuntime().availableProcessors() + 1;
+    public TaskSimulator(final TaskController taskController) {
+        this.taskController = taskController;
         this.executor = Executors.newFixedThreadPool(numThreads);
         this.boidsList = new ArrayList<>();
     }
 
     public void runSimulation() {
-        divideBoids(boidsController.getModel().getBoids(), numThreads);
+        divideBoids(taskController.getModel().getBoids(), numThreads);
 
         while (this.running) {
             synchronized (this) {
@@ -42,7 +41,7 @@ public class BoidsSimulator {
 
             CustomCountDownLatch velocityLatch = new CustomCountDownLatchImpl(boidsList.size());
             for (List<Boid> boids : boidsList) {
-                this.executor.execute(new UpdateVelocityTask(velocityLatch, boids, boidsController.getModel()));
+                this.executor.execute(new UpdateVelocityTask(velocityLatch, boids, taskController.getModel()));
             }
             try {
                 velocityLatch.await();
@@ -52,7 +51,7 @@ public class BoidsSimulator {
 
             CustomCountDownLatch positionLatch = new CustomCountDownLatchImpl(boidsList.size());
             for (List<Boid> boids : boidsList) {
-                this.executor.execute(new UpdatePositionTask(positionLatch, boids, boidsController.getModel()));
+                this.executor.execute(new UpdatePositionTask(positionLatch, boids, taskController.getModel()));
             }
             try {
                 positionLatch.await();
@@ -60,37 +59,17 @@ public class BoidsSimulator {
                 Thread.currentThread().interrupt();
             }
 
-            var t0 = System.currentTimeMillis();
-            if (boidsController.getView() != null) {
-                boidsController.getView().update(framerate);
-                var t1 = System.currentTimeMillis();
-                var dtElapsed = t1 - t0;
-                var frameRatePeriod = 1000 / FRAMERATE;
-
-                if (dtElapsed < frameRatePeriod) {
-                    try {
-                        Thread.sleep(frameRatePeriod - dtElapsed);
-                    } catch (InterruptedException ex) {
-                        Thread.currentThread().interrupt();
-                    }
-                    framerate = FRAMERATE;
-                } else {
-                    framerate = (int) (1000 / dtElapsed);
-                }
-            }
-            
+            updateView();
     	}
     }
 
     public void newSimulation() {
         this.running = true;
+        this.executor = Executors.newFixedThreadPool(numThreads);
         new Thread(this::runSimulation).start();
     }
 
-    public synchronized void pauseSimulation() {
-        this.paused = true;
-    }
-
+    @Override
     public synchronized void resumeSimulation() {
         this.paused = false;
         notify();
@@ -126,5 +105,28 @@ public class BoidsSimulator {
         this.running = false;
         this.paused = false;
         notify();
+        stopExecutor();
+    }
+
+    @Override
+    public void updateView() {
+        var t0 = System.currentTimeMillis();
+        if (taskController.getView() != null) {
+            taskController.getView().update(framerate);
+            var t1 = System.currentTimeMillis();
+            var dtElapsed = t1 - t0;
+            var frameRatePeriod = 1000 / FRAMERATE;
+
+            if (dtElapsed < frameRatePeriod) {
+                try {
+                    Thread.sleep(frameRatePeriod - dtElapsed);
+                } catch (InterruptedException ex) {
+                    Thread.currentThread().interrupt();
+                }
+                framerate = FRAMERATE;
+            } else {
+                framerate = (int) (1000 / dtElapsed);
+            }
+        }
     }
 }

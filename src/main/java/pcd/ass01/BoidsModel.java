@@ -1,14 +1,14 @@
-package pcd.ass01.taskexecutor;
+package pcd.ass01;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class BoidsModel {
-    
+
     private final List<Boid> boids;
-    private double separationWeight; 
-    private double alignmentWeight; 
-    private double cohesionWeight; 
+    private double separationWeight;
+    private double alignmentWeight;
+    private double cohesionWeight;
     private final double width;
     private final double height;
     private final double maxSpeed;
@@ -31,76 +31,77 @@ public class BoidsModel {
         this.maxSpeed = maxSpeed;
         this.perceptionRadius = perceptionRadius;
         this.avoidRadius = avoidRadius;
-        this.boids = new ArrayList<>();
+
+        boids = new ArrayList<>();
     }
-    
+
     public List<Boid> getBoids(){
-    	return boids;
+        return boids;
     }
-    
+
     public double getMinX() {
-    	return -width/2;
+        return -width/2;
     }
 
     public double getMaxX() {
-    	return width/2;
+        return width/2;
     }
 
     public double getMinY() {
-    	return -height/2;
+        return -height/2;
     }
 
     public double getMaxY() {
-    	return height/2;
+        return height/2;
     }
-    
+
     public double getWidth() {
-    	return width;
+        return width;
     }
- 
+
     public double getHeight() {
-    	return height;
+        return height;
     }
 
     public void setSeparationWeight(double value) {
-    	this.separationWeight = value;
+        this.separationWeight = value;
     }
 
     public void setAlignmentWeight(double value) {
-    	this.alignmentWeight = value;
+        this.alignmentWeight = value;
     }
 
     public void setCohesionWeight(double value) {
-    	this.cohesionWeight = value;
+        this.cohesionWeight = value;
     }
 
     public double getSeparationWeight() {
-    	return separationWeight;
+        return separationWeight;
     }
 
     public double getCohesionWeight() {
-    	return cohesionWeight;
+        return cohesionWeight;
     }
 
     public double getAlignmentWeight() {
-    	return alignmentWeight;
+        return alignmentWeight;
     }
-    
+
     public double getMaxSpeed() {
-    	return maxSpeed;
+        return maxSpeed;
     }
 
     public double getAvoidRadius() {
-    	return avoidRadius;
+        return avoidRadius;
     }
 
     public double getPerceptionRadius() {
-    	return perceptionRadius;
+        return perceptionRadius;
     }
 
-    public void setBoidsNumber(int nboids) {
+    public void setBoidsNumber(int nBoids) {
         boids.clear();
-        for (int i = 0; i < nboids; i++) {
+        for (int i = 0; i < nBoids; i++) {
             P2d pos = new P2d(-width/2 + Math.random() * width, -height/2 + Math.random() * height);
             V2d vel = new V2d(Math.random() * maxSpeed/2 - maxSpeed/4, Math.random() * maxSpeed/2 - maxSpeed/4);
             boids.add(new Boid(pos, vel));
