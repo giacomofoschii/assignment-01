@@ -43,6 +43,11 @@ public class MultithreadingController extends BoidsController {
         }
     }
 
+    public synchronized void resumeSimulation() {
+        this.paused = false;
+        notifyAll();
+    }
+
     public synchronized void newSimulation() {
         running = true;
         for (int i = 0; i < numThreads; i++) {
@@ -65,6 +70,10 @@ public class MultithreadingController extends BoidsController {
             thread.setStopped(true);
         }
     }
+
+    public boolean isPaused() {
+        return paused;
+    };
 
     private List<Boid> getThreadPool(int threadIndex) {
         List<Boid> boids = model.getBoids();

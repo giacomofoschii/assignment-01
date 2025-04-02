@@ -1,19 +1,18 @@
 package pcd.ass01.multithreading;
 
 import pcd.ass01.Boid;
-import pcd.ass01.BoidsController;
 
 import java.util.List;
 import java.util.concurrent.BrokenBarrierException;
 
 public class BoidThread extends Thread{
     private List<Boid> boids;
-    private final BoidsController controller;
+    private final MultithreadingController controller;
     private final CustomCyclicBarrier barrier;
     private final Administrator administrator;
     private volatile boolean stopped;
 
-    public BoidThread(final List<Boid> boids, final BoidsController controller,
+    public BoidThread(final List<Boid> boids, final MultithreadingController controller,
                       final CustomCyclicBarrier barrier, final Administrator administrator) {
         assignPool(boids);
         this.controller = controller;
