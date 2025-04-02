@@ -5,8 +5,8 @@ import java.awt.*;
 
 public class BoidsPanel extends JPanel {
 
-	private BoidsView view;
-	private BoidsModel model;
+	private final BoidsView view;
+	private final BoidsModel model;
     private int framerate;
 
     public BoidsPanel(BoidsView view, BoidsModel model) {

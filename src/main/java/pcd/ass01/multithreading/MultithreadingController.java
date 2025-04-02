@@ -77,7 +77,7 @@ public class MultithreadingController extends BoidsController {
 
     public boolean isPaused() {
         return paused;
-    };
+    }
 
     private List<Boid> getThreadPool(int threadIndex) {
         List<Boid> boids = model.getBoids();
