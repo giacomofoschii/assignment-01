@@ -23,5 +23,9 @@ public class UpdatePositionTask implements Runnable {
             boid.updatePos(model);
         }
         this.latch.countDown();
+        try {
+            this.latch.await();
+        } catch (InterruptedException ignored) {
+        }
     }
 }

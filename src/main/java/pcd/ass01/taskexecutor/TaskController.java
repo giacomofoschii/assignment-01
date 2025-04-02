@@ -15,7 +15,6 @@ public class TaskController extends BoidsController {
     public TaskController() {
         super();
         this.executor = Executors.newFixedThreadPool(numThreads);
-        this.boidsList = new ArrayList<>();
     }
 
     @Override
@@ -40,20 +39,10 @@ public class TaskController extends BoidsController {
             for (List<Boid> boids : boidsList) {
                 this.executor.execute(new UpdateVelocityTask(velocityLatch, boids, model));
             }
-            try {
-                velocityLatch.await();
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-            }
 
             CustomCountDownLatch positionLatch = new CustomCountDownLatchImpl(boidsList.size());
             for (List<Boid> boids : boidsList) {
                 this.executor.execute(new UpdatePositionTask(positionLatch, boids, model));
-            }
-            try {
-                positionLatch.await();
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
             }
 
             updateView();

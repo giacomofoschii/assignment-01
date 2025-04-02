@@ -5,7 +5,7 @@ import static pcd.ass01.Constants.*;
 public abstract class BoidsController {
     protected BoidsModel model;
     protected BoidsView view;
-    protected final int numThreads = Runtime.getRuntime().availableProcessors();
+    protected final int numThreads = Runtime.getRuntime().availableProcessors() + 1;
     protected volatile boolean running = true;
     protected volatile boolean paused = false;
 

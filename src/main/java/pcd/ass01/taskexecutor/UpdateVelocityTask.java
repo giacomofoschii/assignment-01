@@ -22,6 +22,10 @@ public class UpdateVelocityTask implements Runnable {
             boid.updateVelocity(model);
         }
         this.latch.countDown();
+        try {
+            this.latch.await();
+        } catch (InterruptedException ignored) {
+        }
     }
 
 }

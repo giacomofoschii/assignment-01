@@ -4,9 +4,7 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class CustomCountDownLatchImpl implements CustomCountDownLatch {
-    private int waitingTasks ;
-    private final ReentrantLock lock = new ReentrantLock();
-    private final Condition condition = lock.newCondition();
+    private int waitingTasks;
 
     public CustomCountDownLatchImpl(int waitingTasks ) {
         if (waitingTasks < 0) throw new IllegalArgumentException("Number of waiting tasks cannot be negative");
@@ -14,43 +12,28 @@ public class CustomCountDownLatchImpl implements CustomCountDownLatch {
     }
 
     @Override
-    public void await() {
-        lock.lock();
-        try {
-            while (waitingTasks > 0) {
-                try{
-                    condition.await();
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                }
+    public synchronized void await() {
+        while (waitingTasks > 0) {
+            try{
+                wait();
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
             }
-        } finally {
-            lock.unlock();
         }
     }
 
     @Override
-    public void countDown() {
-        lock.lock();
-        try{
-            if(waitingTasks > 0) {
-                waitingTasks--;
-                if (waitingTasks == 0) {
-                    condition.signalAll();
-                }
+    public synchronized void countDown() {
+        if(waitingTasks > 0) {
+            waitingTasks--;
+            if (waitingTasks == 0) {
+                notifyAll();
             }
-        } finally {
-            lock.unlock();
         }
     }
 
     @Override
-    public int getCount() {
-        lock.lock();
-        try {
-            return waitingTasks;
-        } finally {
-            lock.unlock();
-        }
+    public synchronized int getCount() {
+        return waitingTasks;
     }
 }
