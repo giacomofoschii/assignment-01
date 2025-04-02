@@ -33,10 +33,6 @@ public abstract class BoidsController {
         this.paused = true;
     };
 
-    public boolean isPaused() {
-        return this.paused;
-    };
-
     public BoidsModel getModel() {
         return this.model;
     };
