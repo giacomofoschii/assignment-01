@@ -1,7 +1,5 @@
 package pcd.ass01;
 
-import pcd.ass01.BoidsView;
-
 import javax.swing.*;
 import java.awt.*;
 
