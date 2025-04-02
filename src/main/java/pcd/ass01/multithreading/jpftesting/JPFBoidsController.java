@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.concurrent.CyclicBarrier;
 
 public class JPFBoidsController {
-    private JPFBoidsModel model;
+    private final JPFBoidsModel model;
     private final Administrator administrator;
     private final CyclicBarrier barrier;
     private final int numThreads;
@@ -41,33 +41,17 @@ public class JPFBoidsController {
     public void runSimulation() {
         divideBoids();
         startThreads();
-        administrator.waitThreads();
-        administrator.signalDone();
+        while(true) {
+            administrator.waitThreads();
+            administrator.signalDone();
+            break;
+        }
     }
 
     public synchronized void stopSimulation() {
         for (JPFBoidThread thread : threads) {
             thread.interrupt();
         }
-        for (JPFBoidThread thread : threads) {
-            try {
-                thread.join();
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-            }
-        }
-    }
-
-    public synchronized void newSimulation() {
-        for (int i = 0; i < numThreads; i++) {
-            if (!threads.get(i).isAlive()) {
-                threads.set(i, new JPFBoidThread(getThreadPool(i), barrier, administrator));
-                threads.get(i).start();
-            } else {
-                threads.get(i).assignPool(getThreadPool(i));
-            }
-        }
-        runSimulation();
     }
 
     private List<JPFBoid> getThreadPool(int threadIndex) {

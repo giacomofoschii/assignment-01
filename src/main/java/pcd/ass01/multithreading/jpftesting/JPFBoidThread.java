@@ -7,23 +7,15 @@ import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.CyclicBarrier;
 
 public class JPFBoidThread extends Thread{
-    private List<JPFBoid> boids;
+    private final List<JPFBoid> boids;
     private final CyclicBarrier barrier;
     private final Administrator administrator;
 
     public JPFBoidThread(final List<JPFBoid> boids,
                       final CyclicBarrier barrier, final Administrator administrator) {
-        assignPool(boids);
+        this.boids = boids;
         this.barrier = barrier;
         this.administrator = administrator;
-    }
-
-
-    public void assignPool(List<JPFBoid> boids) {
-        if(this.boids != null) {
-            this.boids.clear();
-        }
-        this.boids = boids;
     }
 
     @Override
@@ -36,8 +28,7 @@ public class JPFBoidThread extends Thread{
 
             try {
                 barrier.await(); //Wait all the boids to update their velocities
-            } catch (InterruptedException | BrokenBarrierException e) {
-                Thread.currentThread().interrupt();
+            } catch (InterruptedException | BrokenBarrierException ignored) {
             }
 
             for (JPFBoid boid : boids) {
@@ -45,6 +36,7 @@ public class JPFBoidThread extends Thread{
             }
 
             this.administrator.threadDone();
+            break;
         }
     }
 

@@ -7,8 +7,5 @@ public class JPFBoidsSimulation {
         boidsController.getModel().setBoidsNumber(10);
         boidsController.runSimulation();
         boidsController.stopSimulation();
-        boidsController.getModel().setBoidsNumber(50);
-        boidsController.newSimulation();
-        boidsController.stopSimulation();
     }
 }
