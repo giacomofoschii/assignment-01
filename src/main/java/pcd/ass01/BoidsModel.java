@@ -1,8 +1,7 @@
-package pcd.ass01.multithreading;
+package pcd.ass01;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 public class BoidsModel {
     
@@ -15,7 +14,6 @@ public class BoidsModel {
     private final double maxSpeed;
     private final double perceptionRadius;
     private final double avoidRadius;
-    private final Random generator;
 
     public BoidsModel(double initialSeparationWeight,
                       double initialAlignmentWeight,
@@ -24,8 +22,7 @@ public class BoidsModel {
                       double height,
                       double maxSpeed,
                       double perceptionRadius,
-                      double avoidRadius,
-                      Random generator){
+                      double avoidRadius){
         separationWeight = initialSeparationWeight;
         alignmentWeight = initialAlignmentWeight;
         cohesionWeight = initialCohesionWeight;
@@ -34,11 +31,10 @@ public class BoidsModel {
         this.maxSpeed = maxSpeed;
         this.perceptionRadius = perceptionRadius;
         this.avoidRadius = avoidRadius;
-        this.generator = generator;
-
+        
     	boids = new ArrayList<>();
     }
-
+    
     public List<Boid> getBoids(){
     	return boids;
     }
@@ -106,8 +102,8 @@ public class BoidsModel {
     public void setBoidsNumber(int nBoids) {
         boids.clear();
         for (int i = 0; i < nBoids; i++) {
-            P2d pos = new P2d(-width/2 + generator.nextDouble() * width, -height/2 + generator.nextDouble() * height);
-            V2d vel = new V2d(generator.nextDouble() * maxSpeed/2 - maxSpeed/4, generator.nextDouble() * maxSpeed/2 - maxSpeed/4);
+            P2d pos = new P2d(-width/2 + Math.random() * width, -height/2 + Math.random() * height);
+            V2d vel = new V2d(Math.random() * maxSpeed/2 - maxSpeed/4, Math.random() * maxSpeed/2 - maxSpeed/4);
             boids.add(new Boid(pos, vel));
         }
     }

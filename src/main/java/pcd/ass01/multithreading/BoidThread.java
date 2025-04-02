@@ -1,5 +1,8 @@
 package pcd.ass01.multithreading;
 
+import pcd.ass01.Boid;
+import pcd.ass01.BoidsController;
+
 import java.util.List;
 import java.util.concurrent.BrokenBarrierException;
 

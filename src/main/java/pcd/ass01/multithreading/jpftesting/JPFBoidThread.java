@@ -1,8 +1,6 @@
 package pcd.ass01.multithreading.jpftesting;
 
 import pcd.ass01.multithreading.Administrator;
-import pcd.ass01.multithreading.Boid;
-import pcd.ass01.multithreading.BoidsController;
 
 import java.util.List;
 import java.util.concurrent.BrokenBarrierException;
