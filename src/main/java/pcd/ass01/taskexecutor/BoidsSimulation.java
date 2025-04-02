@@ -4,6 +4,6 @@ public class BoidsSimulation {
 
     public static void main(String[] args) {
     	var controller = new TaskController();
-		controller.initialize();
+		controller.runSimulation();
     }
 }

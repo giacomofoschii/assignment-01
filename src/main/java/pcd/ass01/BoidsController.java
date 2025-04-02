@@ -1,32 +1,68 @@
 package pcd.ass01;
 
+import static pcd.ass01.Constants.*;
+
 public abstract class BoidsController {
-    protected final static double SEPARATION_WEIGHT = 1.0;
-    protected final static double ALIGNMENT_WEIGHT = 1.0;
-    protected final static double COHESION_WEIGHT = 1.0;
-
-    protected final static int ENVIRONMENT_WIDTH = 1000;
-    protected final static int ENVIRONMENT_HEIGHT = 1000;
-    protected final static double MAX_SPEED = 4.0;
-    protected final static double PERCEPTION_RADIUS = 50.0;
-    protected final static double AVOID_RADIUS = 20.0;
-
-    protected final static int SCREEN_WIDTH = 1000;
-    protected final static int SCREEN_HEIGHT = 800;
-
     protected BoidsModel model;
     protected BoidsView view;
+    protected final int numThreads = Runtime.getRuntime().availableProcessors();
+    protected volatile boolean running = true;
+    protected volatile boolean paused = false;
 
-    public abstract BoidsSimulator getSimulator();
+    private int framerate;
+
+    public BoidsController() {
+        model = new BoidsModel(
+                SEPARATION_WEIGHT, ALIGNMENT_WEIGHT, COHESION_WEIGHT,
+                ENVIRONMENT_WIDTH, ENVIRONMENT_HEIGHT,
+                MAX_SPEED,
+                PERCEPTION_RADIUS,
+                AVOID_RADIUS);
+        view = new BoidsView(this, SCREEN_WIDTH, SCREEN_HEIGHT);
+    }
+
+    public abstract void newSimulation();
+
+    public abstract void stopSimulation();
+
+    public abstract void runSimulation();
+
+    public synchronized void pauseSimulation() {
+        this.paused = true;
+    };
+
+    public synchronized void resumeSimulation() {
+        this.paused = false;
+        notifyAll();
+    };
+
+    public boolean isPaused() {
+        return this.paused;
+    };
 
     public BoidsModel getModel() {
         return this.model;
     };
 
-    public BoidsView getView() {
-        return this.view;
+    public void updateView() {
+        var t0 = System.currentTimeMillis();
+
+        if (this.view != null) {
+            this.view.update(framerate);
+            var t1 = System.currentTimeMillis();
+            var dtElapsed = t1 - t0;
+            var frameRatePeriod = 1000 / FRAMERATE;
+
+            if (dtElapsed < frameRatePeriod) {
+                try {
+                    Thread.sleep(frameRatePeriod - dtElapsed);
+                } catch (InterruptedException ex) {
+                    Thread.currentThread().interrupt();
+                }
+                framerate = FRAMERATE;
+            } else {
+                framerate = (int) (1000 / dtElapsed);
+            }
+        }
     };
-
-    public abstract void initialize();
-
 }
