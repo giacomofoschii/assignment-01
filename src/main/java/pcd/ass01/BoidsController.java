@@ -21,19 +21,16 @@ public abstract class BoidsController {
         view = new BoidsView(this, SCREEN_WIDTH, SCREEN_HEIGHT);
     }
 
+    public abstract void runSimulation();
+
     public abstract void newSimulation();
 
     public abstract void stopSimulation();
 
-    public abstract void runSimulation();
+    public abstract void resumeSimulation();
 
     public synchronized void pauseSimulation() {
         this.paused = true;
-    };
-
-    public synchronized void resumeSimulation() {
-        this.paused = false;
-        notifyAll();
     };
 
     public boolean isPaused() {

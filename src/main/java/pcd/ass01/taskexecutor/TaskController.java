@@ -65,7 +65,6 @@ public class TaskController extends BoidsController {
         new Thread(this::runSimulation).start();
     }
 
-    @Override
     public synchronized void resumeSimulation() {
         this.paused = false;
         notify();
