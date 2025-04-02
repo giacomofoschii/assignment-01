@@ -33,6 +33,7 @@ public class MultithreadingController extends BoidsController {
         }
     }
 
+    @Override
     public void runSimulation() {
         while (running) {
             administrator.waitThreads();
@@ -43,11 +44,13 @@ public class MultithreadingController extends BoidsController {
         }
     }
 
+    @Override
     public synchronized void resumeSimulation() {
         this.paused = false;
         notifyAll();
     }
 
+    @Override
     public synchronized void newSimulation() {
         running = true;
         for (int i = 0; i < numThreads; i++) {
@@ -63,6 +66,7 @@ public class MultithreadingController extends BoidsController {
         new Thread(this::runSimulation).start();
     }
 
+    @Override
     public synchronized void stopSimulation() {
         paused = false;
         running = false;
