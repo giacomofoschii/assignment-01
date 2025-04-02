@@ -66,9 +66,9 @@ public class BoidsView implements ChangeListener {
         JButton stopButton = new JButton("Stop");
 
         stopButton.addActionListener(e -> {
-            this.boidsController.getSimulator().stopSimulation();
+            this.boidsController.stopSimulation();
             startPanel();
-            this.boidsController.getSimulator().newSimulation();
+            this.boidsController.newSimulation();
             if(!isRunning) {
                 pauseButton.setText("Pause");
                 isRunning = true;
@@ -77,10 +77,10 @@ public class BoidsView implements ChangeListener {
 
         pauseButton.addActionListener(e -> {
             if (isRunning) {
-                this.boidsController.getSimulator().pauseSimulation();
+                this.boidsController.pauseSimulation();
                 pauseButton.setText("Resume");
             } else {
-                this.boidsController.getSimulator().resumeSimulation();
+                this.boidsController.resumeSimulation();
                 pauseButton.setText("Pause");
             }
             isRunning = !isRunning;

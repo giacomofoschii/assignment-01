@@ -4,6 +4,7 @@ public class BoidsSimulation {
 
     public static void main(String[] args) {
 		var boidsController = new MultithreadingController();
-		boidsController.initialize();
+		boidsController.startThreads();
+        boidsController.runSimulation();
     }
 }

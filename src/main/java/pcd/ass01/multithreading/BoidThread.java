@@ -35,10 +35,10 @@ public class BoidThread extends Thread{
     @Override
     public void run() {
         while(!stopped) {
-            synchronized (this.controller.getSimulator()) {
-                while(this.controller.getSimulator().isPaused()) {
+            synchronized (this.controller) {
+                while(this.controller.isPaused()) {
                     try {
-                        this.controller.getSimulator().wait();
+                        this.controller.wait();
                     } catch (InterruptedException e) {
                         Thread.currentThread().interrupt();
                     }
