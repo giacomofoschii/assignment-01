@@ -3,12 +3,13 @@ package pcd.ass01.virtualthread;
 import pcd.ass01.Boid;
 import pcd.ass01.BoidsController;
 import java.util.LinkedList;
+import java.util.Queue;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class VirtualController extends BoidsController {
 
     private final CustomCyclicBarrier barrier;
-    private final LinkedList<BoidVirtualThread> threads;
+    private final Queue<BoidVirtualThread> threads;
     private final Administrator administrator;
     private final ReentrantLock lock;
 
@@ -23,11 +24,9 @@ public class VirtualController extends BoidsController {
     public void startThreads() {
         administrator.setThreadNumber(model.getBoids().size());
         for(Boid boid : model.getBoids()) {
-            threads.add(new BoidVirtualThread(boid, barrier, administrator, this));
-        }
-        for (BoidVirtualThread thread : threads) {
-            thread.setStopped(false);
-            thread.start();
+            BoidVirtualThread boidThread = new BoidVirtualThread(boid, barrier, administrator, this);
+            threads.add(boidThread);
+            Thread.ofVirtual().start(boidThread);
         }
     }
 
@@ -75,7 +74,6 @@ public class VirtualController extends BoidsController {
             running = false;
             for (BoidVirtualThread thread : threads) {
                 thread.setStopped(true);
-                thread.interrupt();
             }
         } finally {
             lock.unlock();
