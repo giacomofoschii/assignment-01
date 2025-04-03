@@ -10,12 +10,14 @@ public class JPFBoidThread extends Thread{
     private final List<JPFBoid> boids;
     private final CustomCyclicBarrier barrier;
     private final MultiAdministrator multiAdministrator;
+    private final JPFBoidsModel model;
 
-    public JPFBoidThread(final List<JPFBoid> boids,
+    public JPFBoidThread(final List<JPFBoid> boids, final JPFBoidsModel model,
                       final CustomCyclicBarrier barrier, final MultiAdministrator multiAdministrator) {
         this.boids = boids;
         this.barrier = barrier;
         this.multiAdministrator = multiAdministrator;
+        this.model = model;
     }
 
     @Override
@@ -23,7 +25,7 @@ public class JPFBoidThread extends Thread{
         while(true) {
 
             for (JPFBoid boid : boids) {
-                boid.updateVelocity();
+                boid.updateVelocity(model);
             }
 
             try {
@@ -32,7 +34,7 @@ public class JPFBoidThread extends Thread{
             }
 
             for (JPFBoid boid : boids) {
-                boid.updatePos();
+                boid.updatePos(model);
             }
 
             this.multiAdministrator.threadDone();
