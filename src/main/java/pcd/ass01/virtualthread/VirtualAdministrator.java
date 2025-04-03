@@ -30,13 +30,6 @@ public class VirtualAdministrator implements Administrator {
             if(waitingThreads == numThreads) {
                 this.condition.signalAll();
             }
-
-            while(waitingThreads != 0){
-                try {
-                    this.condition.await();
-                } catch (InterruptedException ignored) {
-                }
-            }
         } finally {
             lock.unlock();
         }

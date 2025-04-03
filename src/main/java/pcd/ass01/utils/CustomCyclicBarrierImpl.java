@@ -8,29 +8,41 @@ public class CustomCyclicBarrierImpl implements CustomCyclicBarrier {
 
     private final int waitingThreadNum;
     private int arrivedThreadNum;
+    private final ReentrantLock lock;
+    private final Condition condition;
 
     public CustomCyclicBarrierImpl(int waitingThreadNum) {
         this.waitingThreadNum = waitingThreadNum;
         this.arrivedThreadNum = 0;
+        this.lock = new ReentrantLock();
+        this.condition = lock.newCondition();
     }
 
     @Override
-    public synchronized void await() throws InterruptedException, BrokenBarrierException {
+    public void await() throws InterruptedException, BrokenBarrierException {
+        lock.lock();
         try {
             arrivedThreadNum++;
 
             if (arrivedThreadNum < waitingThreadNum) {
-                wait();
+                this.condition.await();
             } else {
                 arrivedThreadNum = 0;
-                notifyAll();
+                this.condition.signalAll();
             }
-        } catch (InterruptedException ignored) {}
+        } finally {
+            lock.unlock();
+        }
     }
 
     @Override
-    public synchronized void reset() {
-        arrivedThreadNum = 0;
-        notifyAll();
+    public void reset() {
+        lock.lock();
+        try{
+            arrivedThreadNum = 0;
+            this.condition.signalAll();
+        } finally {
+            lock.unlock();
+        }
     }
 }
