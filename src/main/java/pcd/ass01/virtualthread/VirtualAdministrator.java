@@ -1,9 +1,11 @@
 package pcd.ass01.virtualthread;
 
+import pcd.ass01.utils.Administrator;
+
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
-public class VirtualAdministrator {
+public class VirtualAdministrator implements Administrator {
 
     private int numThreads;
     private int waitingThreads;
@@ -20,6 +22,7 @@ public class VirtualAdministrator {
         this.numThreads = numThreads;
     }
 
+    @Override
     public void threadDone() {
         lock.lock();
         try {
@@ -32,6 +35,7 @@ public class VirtualAdministrator {
         }
     }
 
+    @Override
     public void waitThreads() {
         lock.lock();
         try {
@@ -47,6 +51,7 @@ public class VirtualAdministrator {
         }
     }
 
+    @Override
     public void signalDone() {
         lock.lock();
         try {

@@ -1,6 +1,6 @@
 package pcd.ass01.multithreading.jpftesting;
 
-import pcd.ass01.multithreading.Administrator;
+import pcd.ass01.multithreading.MultiAdministrator;
 
 import java.util.List;
 import java.util.concurrent.BrokenBarrierException;
@@ -9,13 +9,13 @@ import java.util.concurrent.CyclicBarrier;
 public class JPFBoidThread extends Thread{
     private final List<JPFBoid> boids;
     private final CyclicBarrier barrier;
-    private final Administrator administrator;
+    private final MultiAdministrator multiAdministrator;
 
     public JPFBoidThread(final List<JPFBoid> boids,
-                      final CyclicBarrier barrier, final Administrator administrator) {
+                      final CyclicBarrier barrier, final MultiAdministrator multiAdministrator) {
         this.boids = boids;
         this.barrier = barrier;
-        this.administrator = administrator;
+        this.multiAdministrator = multiAdministrator;
     }
 
     @Override
@@ -35,7 +35,7 @@ public class JPFBoidThread extends Thread{
                 boid.updatePos();
             }
 
-            this.administrator.threadDone();
+            this.multiAdministrator.threadDone();
             break;
         }
     }

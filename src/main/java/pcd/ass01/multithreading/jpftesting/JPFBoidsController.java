@@ -1,6 +1,6 @@
 package pcd.ass01.multithreading.jpftesting;
 
-import pcd.ass01.multithreading.Administrator;
+import pcd.ass01.multithreading.MultiAdministrator;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -9,7 +9,7 @@ import java.util.concurrent.CyclicBarrier;
 
 public class JPFBoidsController {
     private final JPFBoidsModel model;
-    private final Administrator administrator;
+    private final MultiAdministrator multiAdministrator;
     private final CyclicBarrier barrier;
     private final int numThreads;
     private final LinkedList<JPFBoidThread> threads;
@@ -18,7 +18,7 @@ public class JPFBoidsController {
         numThreads = Runtime.getRuntime().availableProcessors() + 1;
         this.model = new JPFBoidsModel();
         this.threads = new LinkedList<>();
-        this.administrator = new Administrator(numThreads);
+        this.multiAdministrator = new MultiAdministrator(numThreads);
         this.barrier = new CyclicBarrier(numThreads);
     }
 
@@ -28,7 +28,7 @@ public class JPFBoidsController {
 
     private void divideBoids() {
         for (int i = 0; i < numThreads; i++) {
-            threads.add(new JPFBoidThread(getThreadPool(i), barrier, administrator));
+            threads.add(new JPFBoidThread(getThreadPool(i), barrier, multiAdministrator));
         }
     }
 
@@ -42,8 +42,8 @@ public class JPFBoidsController {
         divideBoids();
         startThreads();
         while(true) {
-            administrator.waitThreads();
-            administrator.signalDone();
+            multiAdministrator.waitThreads();
+            multiAdministrator.signalDone();
             break;
         }
     }

@@ -10,14 +10,14 @@ import java.util.List;
 
 public class MultithreadingController extends BoidsController {
 
-    private final Administrator administrator;
+    private final MultiAdministrator multiAdministrator;
     private final CustomCyclicBarrier barrier;
     private final LinkedList<BoidThread> threads;
 
     public MultithreadingController() {
         super();
         this.threads = new LinkedList<>();
-        this.administrator = new Administrator(numThreads);
+        this.multiAdministrator = new MultiAdministrator(numThreads);
         this.barrier = new CustomCyclicBarrierImpl(numThreads);
 
         divideBoids();
@@ -25,7 +25,7 @@ public class MultithreadingController extends BoidsController {
 
     public void divideBoids() {
         for (int i = 0; i < numThreads; i++) {
-            threads.add(new BoidThread(getThreadPool(i), this, barrier, administrator));
+            threads.add(new BoidThread(getThreadPool(i), this, barrier, multiAdministrator));
         }
     }
 
@@ -39,11 +39,11 @@ public class MultithreadingController extends BoidsController {
     @Override
     public void runSimulation() {
         while (running) {
-            administrator.waitThreads();
+            multiAdministrator.waitThreads();
 
             updateView();
 
-            administrator.signalDone();
+            multiAdministrator.signalDone();
         }
     }
 
@@ -58,7 +58,7 @@ public class MultithreadingController extends BoidsController {
         running = true;
         for (int i = 0; i < numThreads; i++) {
             if (!threads.get(i).isAlive()) {
-                threads.set(i, new BoidThread(getThreadPool(i), this, barrier, administrator));
+                threads.set(i, new BoidThread(getThreadPool(i), this, barrier, multiAdministrator));
                 threads.get(i).start();
             } else {
                 threads.get(i).assignPool(getThreadPool(i));

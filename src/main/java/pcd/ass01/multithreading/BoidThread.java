@@ -10,15 +10,15 @@ public class BoidThread extends Thread{
     private List<Boid> boids;
     private final MultithreadingController controller;
     private final CustomCyclicBarrier barrier;
-    private final Administrator administrator;
+    private final MultiAdministrator multiAdministrator;
     private volatile boolean stopped;
 
     public BoidThread(final List<Boid> boids, final MultithreadingController controller,
-                      final CustomCyclicBarrier barrier, final Administrator administrator) {
+                      final CustomCyclicBarrier barrier, final MultiAdministrator multiAdministrator) {
         assignPool(boids);
         this.controller = controller;
         this.barrier = barrier;
-        this.administrator = administrator;
+        this.multiAdministrator = multiAdministrator;
     }
 
     public void assignPool(List<Boid> boids) {
@@ -60,7 +60,7 @@ public class BoidThread extends Thread{
                 boid.updatePos(this.controller.getModel());
             }
 
-            this.administrator.threadDone();
+            this.multiAdministrator.threadDone();
         }
     }
 }
