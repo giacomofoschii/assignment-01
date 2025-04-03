@@ -2,6 +2,7 @@ package pcd.ass01.taskexecutor;
 
 import pcd.ass01.Boid;
 import pcd.ass01.BoidsModel;
+import pcd.ass01.utils.CustomCountDownLatch;
 
 import java.util.List;
 

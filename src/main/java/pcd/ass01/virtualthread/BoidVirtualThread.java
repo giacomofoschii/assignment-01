@@ -1,6 +1,7 @@
 package pcd.ass01.virtualthread;
 
 import pcd.ass01.Boid;
+import pcd.ass01.utils.CustomCyclicBarrier;
 
 import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.locks.Condition;
@@ -9,14 +10,14 @@ import java.util.concurrent.locks.ReentrantLock;
 public class BoidVirtualThread extends Thread{
     private final Boid boid;
     private final CustomCyclicBarrier barrier;
-    private final Administrator admin;
+    private final VirtualAdministrator admin;
     private final VirtualController controller;
     private volatile boolean stopped;
     private final ReentrantLock lock;
     private final Condition condition;
 
     public BoidVirtualThread(Boid boid, CustomCyclicBarrier barrier,
-                             Administrator admin, VirtualController controller,
+                             VirtualAdministrator admin, VirtualController controller,
                              ReentrantLock lock, Condition condition) {
         this.boid = boid;
         this.barrier = barrier;

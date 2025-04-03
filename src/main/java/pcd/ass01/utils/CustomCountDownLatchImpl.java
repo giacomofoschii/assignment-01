@@ -1,4 +1,4 @@
-package pcd.ass01.taskexecutor;
+package pcd.ass01.utils;
 
 public class CustomCountDownLatchImpl implements CustomCountDownLatch {
     private int waitingTasks;

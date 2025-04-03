@@ -1,6 +1,7 @@
 package pcd.ass01.multithreading;
 
 import pcd.ass01.Boid;
+import pcd.ass01.utils.CustomCyclicBarrier;
 
 import java.util.List;
 import java.util.concurrent.BrokenBarrierException;

@@ -2,6 +2,9 @@ package pcd.ass01.virtualthread;
 
 import pcd.ass01.Boid;
 import pcd.ass01.BoidsController;
+import pcd.ass01.utils.CustomCyclicBarrier;
+import pcd.ass01.utils.CustomCyclicBarrierImpl;
+
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.concurrent.locks.Condition;
@@ -11,7 +14,7 @@ public class VirtualController extends BoidsController {
 
     private final CustomCyclicBarrier barrier;
     private final Queue<BoidVirtualThread> threads;
-    private final Administrator administrator;
+    private final VirtualAdministrator virtualAdministrator;
     private final ReentrantLock lock;
     private final Condition condition;
 
@@ -19,15 +22,15 @@ public class VirtualController extends BoidsController {
         super();
         this.barrier = new CustomCyclicBarrierImpl(numThreads);
         this.threads = new LinkedList<>();
-        this.administrator = new Administrator();
+        this.virtualAdministrator = new VirtualAdministrator();
         this.lock = new ReentrantLock();
         this.condition = lock.newCondition();
     }
 
     public void startThreads() {
-        administrator.setThreadNumber(model.getBoids().size());
+        virtualAdministrator.setThreadNumber(model.getBoids().size());
         for(Boid boid : model.getBoids()) {
-            BoidVirtualThread boidThread = new BoidVirtualThread(boid, barrier, administrator, this, lock, condition);
+            BoidVirtualThread boidThread = new BoidVirtualThread(boid, barrier, virtualAdministrator, this, lock, condition);
             threads.add(boidThread);
             Thread.ofVirtual().start(boidThread);
         }
@@ -37,11 +40,11 @@ public class VirtualController extends BoidsController {
     public void runSimulation() {
         startThreads();
         while (running) {
-            administrator.waitThreads();
+            virtualAdministrator.waitThreads();
 
             updateView();
 
-            administrator.signalDone();
+            virtualAdministrator.signalDone();
         }
     }
 

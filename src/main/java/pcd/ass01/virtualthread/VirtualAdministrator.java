@@ -3,14 +3,14 @@ package pcd.ass01.virtualthread;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
-public class Administrator {
+public class VirtualAdministrator {
 
     private int numThreads;
     private int waitingThreads;
     private final ReentrantLock lock;
     private final Condition condition;
 
-    public Administrator() {
+    public VirtualAdministrator() {
         this.waitingThreads = 0;
         this.lock = new ReentrantLock();
         this.condition = lock.newCondition();

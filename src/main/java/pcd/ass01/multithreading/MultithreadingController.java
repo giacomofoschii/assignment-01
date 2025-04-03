@@ -1,6 +1,9 @@
 package pcd.ass01.multithreading;
 
 import pcd.ass01.*;
+import pcd.ass01.utils.CustomCyclicBarrier;
+import pcd.ass01.utils.CustomCyclicBarrierImpl;
+
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;

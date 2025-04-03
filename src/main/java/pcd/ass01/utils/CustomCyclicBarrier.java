@@ -1,4 +1,4 @@
-package pcd.ass01.virtualthread;
+package pcd.ass01.utils;
 
 import java.util.concurrent.BrokenBarrierException;
 
