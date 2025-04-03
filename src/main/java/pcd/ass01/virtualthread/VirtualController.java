@@ -27,7 +27,7 @@ public class VirtualController extends BoidsController {
     public void startThreads() {
         administrator.setThreadNumber(model.getBoids().size());
         for(Boid boid : model.getBoids()) {
-            BoidVirtualThread boidThread = new BoidVirtualThread(boid, barrier, administrator, this);
+            BoidVirtualThread boidThread = new BoidVirtualThread(boid, barrier, administrator, this, lock, condition);
             threads.add(boidThread);
             Thread.ofVirtual().start(boidThread);
         }
@@ -62,7 +62,6 @@ public class VirtualController extends BoidsController {
         try {
             running = true;
             this.threads.clear();
-            resumeSimulation();
             new Thread(this::runSimulation).start();
         } finally {
             lock.unlock();

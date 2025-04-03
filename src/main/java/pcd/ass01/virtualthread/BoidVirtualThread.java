@@ -15,14 +15,16 @@ public class BoidVirtualThread extends Thread{
     private final ReentrantLock lock;
     private final Condition condition;
 
-    public BoidVirtualThread(Boid boid, CustomCyclicBarrier barrier, Administrator admin, VirtualController controller) {
+    public BoidVirtualThread(Boid boid, CustomCyclicBarrier barrier,
+                             Administrator admin, VirtualController controller,
+                             ReentrantLock lock, Condition condition) {
         this.boid = boid;
         this.barrier = barrier;
         this.admin = admin;
         this.controller = controller;
         this.stopped = false;
-        this.lock = new ReentrantLock();
-        this.condition = lock.newCondition();
+        this.lock = lock;
+        this.condition = condition;
     }
 
     public void setStopped(boolean stopped) {
