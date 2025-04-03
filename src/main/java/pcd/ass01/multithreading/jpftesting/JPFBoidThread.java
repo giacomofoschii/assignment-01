@@ -1,18 +1,18 @@
 package pcd.ass01.multithreading.jpftesting;
 
 import pcd.ass01.multithreading.MultiAdministrator;
+import pcd.ass01.utils.CustomCyclicBarrier;
 
 import java.util.List;
 import java.util.concurrent.BrokenBarrierException;
-import java.util.concurrent.CyclicBarrier;
 
 public class JPFBoidThread extends Thread{
     private final List<JPFBoid> boids;
-    private final CyclicBarrier barrier;
+    private final CustomCyclicBarrier barrier;
     private final MultiAdministrator multiAdministrator;
 
     public JPFBoidThread(final List<JPFBoid> boids,
-                      final CyclicBarrier barrier, final MultiAdministrator multiAdministrator) {
+                      final CustomCyclicBarrier barrier, final MultiAdministrator multiAdministrator) {
         this.boids = boids;
         this.barrier = barrier;
         this.multiAdministrator = multiAdministrator;
@@ -27,7 +27,7 @@ public class JPFBoidThread extends Thread{
             }
 
             try {
-                barrier.await(); //Wait all the boids to update their velocities
+                barrier.await();
             } catch (InterruptedException | BrokenBarrierException ignored) {
             }
 
