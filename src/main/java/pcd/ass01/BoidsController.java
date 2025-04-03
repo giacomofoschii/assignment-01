@@ -2,6 +2,9 @@ package pcd.ass01;
 
 import static pcd.ass01.Constants.*;
 
+/**
+ * BoidsController is the controller class for the Boids simulation.
+ */
 public abstract class BoidsController {
     protected BoidsModel model;
     protected BoidsView view;
@@ -21,22 +24,47 @@ public abstract class BoidsController {
         view = new BoidsView(this, SCREEN_WIDTH, SCREEN_HEIGHT);
     }
 
+    /**
+     * Starts the simulation.
+     */
     public abstract void runSimulation();
 
+    /**
+     * Starts a new simulation
+     */
     public abstract void newSimulation();
 
+    /**
+     * Stops the current simulation.
+     */
     public abstract void stopSimulation();
 
+    /**
+     * Resumes the simulation if it is paused.
+     */
     public abstract void resumeSimulation();
 
+    /**
+     * Pauses the simulation.
+     */
     public synchronized void pauseSimulation() {
         this.paused = true;
     }
 
+    /**
+     * Returns the current model linked to the controller.
+     *
+     * @return the current model
+     */
     public BoidsModel getModel() {
         return this.model;
     }
 
+    /**
+     * Updates the view of the simulation,
+     * calculating the time elapsed since the last update
+     * and adjusting the framerate accordingly.
+     */
     public void updateView() {
         var t0 = System.currentTimeMillis();
 
