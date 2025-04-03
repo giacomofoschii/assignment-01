@@ -4,6 +4,7 @@ import pcd.ass01.Boid;
 import pcd.ass01.BoidsController;
 import java.util.LinkedList;
 import java.util.Queue;
+import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class VirtualController extends BoidsController {
@@ -12,6 +13,7 @@ public class VirtualController extends BoidsController {
     private final Queue<BoidVirtualThread> threads;
     private final Administrator administrator;
     private final ReentrantLock lock;
+    private final Condition condition;
 
     public VirtualController() {
         super();
@@ -19,6 +21,7 @@ public class VirtualController extends BoidsController {
         this.threads = new LinkedList<>();
         this.administrator = new Administrator();
         this.lock = new ReentrantLock();
+        this.condition = lock.newCondition();
     }
 
     public void startThreads() {
@@ -47,7 +50,7 @@ public class VirtualController extends BoidsController {
         lock.lock();
         try {
             this.paused = false;
-            notifyAll();
+            this.condition.signalAll();
         } finally {
             lock.unlock();
         }
