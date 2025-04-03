@@ -24,8 +24,7 @@ public class MultiAdministrator implements Administrator {
         while (waitingThreads < numThreads) {
             try {
                 wait();
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
+            } catch (InterruptedException ignored) {
             }
         }
     }

@@ -13,8 +13,7 @@ public class CustomCountDownLatchImpl implements CustomCountDownLatch {
         while (waitingTasks > 0) {
             try{
                 wait();
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
+            } catch (InterruptedException ignored) {
             }
         }
     }

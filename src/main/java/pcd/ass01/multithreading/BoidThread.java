@@ -39,8 +39,7 @@ public class BoidThread extends Thread{
                 while(this.controller.isPaused()) {
                     try {
                         this.controller.wait();
-                    } catch (InterruptedException e) {
-                        Thread.currentThread().interrupt();
+                    } catch (InterruptedException ignored) {
                     }
                 }
             }
@@ -53,7 +52,6 @@ public class BoidThread extends Thread{
                 barrier.await(); //Wait all the boids to update their velocities
             } catch (InterruptedException | BrokenBarrierException e) {
                 barrier.reset();
-                Thread.currentThread().interrupt();
             }
 
             for (Boid boid : boids) {
