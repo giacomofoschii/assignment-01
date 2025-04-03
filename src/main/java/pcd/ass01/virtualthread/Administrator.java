@@ -7,14 +7,17 @@ public class Administrator {
 
     private int numThreads;
     private int waitingThreads;
-    private ReentrantLock lock;
-    private Condition condition;
+    private final ReentrantLock lock;
+    private final Condition condition;
 
-    public void setThreadNumber(int numThreads) {
-        this.numThreads = numThreads;
+    public Administrator() {
         this.waitingThreads = 0;
         this.lock = new ReentrantLock();
         this.condition = lock.newCondition();
+    }
+
+    public void setThreadNumber(int numThreads) {
+        this.numThreads = numThreads;
     }
 
     public void threadDone() {
