@@ -8,7 +8,7 @@ public interface CustomCountDownLatch {
     /**
      * Waits until the latch has counted down to zero.
      *
-     * @throws InterruptedException
+     * @throws InterruptedException if the current thread is interrupted while waiting
      */
     void await() throws InterruptedException;
 

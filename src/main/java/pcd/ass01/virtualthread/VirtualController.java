@@ -97,5 +97,5 @@ public class VirtualController extends BoidsController {
 
     public boolean isPaused() {
         return paused;
-    };
+    }
 }

@@ -12,8 +12,8 @@ public interface CustomCyclicBarrier {
      * the barrier is broken, then it signals all waiting threads to
      * proceed.
      *
-     * @throws InterruptedException
-     * @throws BrokenBarrierException
+     * @throws InterruptedException if the current thread is interrupted while waiting
+     * @throws BrokenBarrierException if the barrier is broken
      */
     void await() throws InterruptedException, BrokenBarrierException;
 
