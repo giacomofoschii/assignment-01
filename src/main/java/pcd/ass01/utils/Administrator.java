@@ -10,15 +10,15 @@ public interface Administrator {
     /**
      * Signals that a thread has completed its task.
      */
-    public void threadDone();
+    void threadDone();
 
     /**
      * Waits for all threads to finish their tasks.
      */
-    public void waitThreads();
+    void waitThreads();
 
     /**
      * Signals that all threads are done.
      */
-    public void signalDone();
+    void signalDone();
 }
