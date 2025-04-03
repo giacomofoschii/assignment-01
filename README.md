@@ -6,7 +6,7 @@ PCD a.y. 2024-2025 - ISI LM UNIBO - Cesena Campus
 * 💻 Giovanni Rinchiuso, giovanni.rinchiuso@studio.unibo.it
 * 💻 Gioele Santi, gioele.santi2@studio.unibo.it
 
-# 🐦🐦🐦🐦 Assignment #01 -  Concurrent Boids 🐦🐦🐦🐦
+## 🐦🐦🐦🐦 Assignment #01 -  Concurrent Boids 🐦🐦🐦🐦
 
 The assignment is about designing and developing a concurrent version of the original [boids simulation](https://en.wikipedia.org/wiki/Boids), as conceived by Craig Reynolds in 1986.
 
