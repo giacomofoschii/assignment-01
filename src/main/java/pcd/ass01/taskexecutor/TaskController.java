@@ -37,12 +37,12 @@ public class TaskController extends BoidsController {
 
             CustomCountDownLatch velocityLatch = new CustomCountDownLatchImpl(boidsList.size());
             for (List<Boid> boids : boidsList) {
-                this.executor.submit(new UpdateVelocityTask(velocityLatch, boids, model));
+                this.executor.execute(new UpdateVelocityTask(velocityLatch, boids, model));
             }
 
             CustomCountDownLatch positionLatch = new CustomCountDownLatchImpl(boidsList.size());
             for (List<Boid> boids : boidsList) {
-                this.executor.submit(new UpdatePositionTask(positionLatch, boids, model));
+                this.executor.execute(new UpdatePositionTask(positionLatch, boids, model));
             }
 
             updateView();
