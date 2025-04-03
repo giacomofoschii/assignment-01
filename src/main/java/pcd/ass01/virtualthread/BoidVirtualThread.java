@@ -41,7 +41,6 @@ public class BoidVirtualThread extends Thread{
                     try{
                         this.condition.await();
                     } catch (InterruptedException e) {
-                        Thread.currentThread().interrupt();
                     }
                 }
             } finally {
@@ -53,7 +52,6 @@ public class BoidVirtualThread extends Thread{
             try{
                 this.barrier.await();
             } catch (InterruptedException | BrokenBarrierException e) {
-                Thread.currentThread().interrupt();
             }
 
             this.boid.updatePos(this.controller.getModel());
