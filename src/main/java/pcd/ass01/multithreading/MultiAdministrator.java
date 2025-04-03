@@ -13,19 +13,26 @@ public class MultiAdministrator implements Administrator {
 
     @Override
     public synchronized void threadDone() {
-        waitingThreads++;
-        if (waitingThreads == numThreads) {
-            notifyAll();
+        try {
+            waitingThreads++;
+            if (waitingThreads == numThreads) {
+                notifyAll();
+            }
+
+            while(waitingThreads != 0){
+                    wait();
+            }
+        } catch (InterruptedException ignored) {
         }
     }
 
     @Override
     public synchronized void waitThreads() {
-        while (waitingThreads < numThreads) {
-            try {
+        try {
+            while (waitingThreads < numThreads) {
                 wait();
-            } catch (InterruptedException ignored) {
             }
+        } catch (InterruptedException ignored) {
         }
     }
 

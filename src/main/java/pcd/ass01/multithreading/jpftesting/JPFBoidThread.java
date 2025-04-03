@@ -13,20 +13,20 @@ public class JPFBoidThread extends Thread{
     private final JPFBoidsModel model;
 
     public JPFBoidThread(final List<JPFBoid> boids, final JPFBoidsModel model,
-                      final CustomCyclicBarrier barrier, final MultiAdministrator multiAdministrator) {
+                         final CustomCyclicBarrier barrier, final MultiAdministrator multiAdministrator) {
         this.boids = boids;
-        this.barrier = barrier;
         this.multiAdministrator = multiAdministrator;
+        this.barrier = barrier;
         this.model = model;
     }
 
     @Override
     public void run() {
         while(true) {
-
             for (JPFBoid boid : boids) {
                 boid.updateVelocity(model);
             }
+
 
             try {
                 barrier.await();
@@ -38,7 +38,6 @@ public class JPFBoidThread extends Thread{
             }
 
             this.multiAdministrator.threadDone();
-            break;
         }
     }
 

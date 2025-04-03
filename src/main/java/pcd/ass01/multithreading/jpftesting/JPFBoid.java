@@ -4,33 +4,23 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.locks.ReentrantLock;
 
-
 public class JPFBoid {
     private P2d pos;
     private V2d vel;
-    private final ReentrantLock lock = new ReentrantLock();
+    private final ReentrantLock lock;
 
-    public JPFBoid(P2d pos, V2d vel) {
+    public JPFBoid(P2d pos, V2d vel, ReentrantLock lock) {
         this.pos = pos;
         this.vel = vel;
+        this.lock = lock;
     }
 
     public P2d getPos() {
-        lock.lock();
-        try{
-            return pos;
-        } finally {
-            lock.unlock();
-        }
+        return pos;
     }
 
     public V2d getVel() {
-        lock.lock();
-        try {
-            return vel;
-        } finally {
-            lock.unlock();
-        }
+        return vel;
     }
 
     private List<JPFBoid> getNearbyBoids(JPFBoidsModel model) {
@@ -104,50 +94,42 @@ public class JPFBoid {
     }
 
     public void updateVelocity(JPFBoidsModel model) {
-        if(lock.tryLock()) {
-            try {
+        /* change velocity vector according to separation, alignment, cohesion */
 
-                /* change velocity vector according to separation, alignment, cohesion */
+        List<JPFBoid> nearbyBoids = getNearbyBoids(model);
 
-                List<JPFBoid> nearbyBoids = getNearbyBoids(model);
+        this.lock.lock();
+        try {
+            V2d separation = calculateSeparation(nearbyBoids, model);
+            V2d alignment = calculateAlignment(nearbyBoids);
+            V2d cohesion = calculateCohesion(nearbyBoids);
 
-                V2d separation = calculateSeparation(nearbyBoids, model);
-                V2d alignment = calculateAlignment(nearbyBoids);
-                V2d cohesion = calculateCohesion(nearbyBoids);
+            vel = vel.sum(alignment.mul(model.getAlignmentWeight()))
+                    .sum(separation.mul(model.getSeparationWeight()))
+                    .sum(cohesion.mul(model.getCohesionWeight()));
 
-                vel = vel.sum(alignment.mul(model.getAlignmentWeight()))
-                        .sum(separation.mul(model.getSeparationWeight()))
-                        .sum(cohesion.mul(model.getCohesionWeight()));
+            /* Limit speed to MAX_SPEED */
 
-                /* Limit speed to MAX_SPEED */
+            double speed = vel.abs();
 
-                double speed = vel.abs();
-
-                if (speed > model.getMaxSpeed()) {
-                    vel = vel.getNormalized().mul(model.getMaxSpeed());
-                }
-            } finally {
-                lock.unlock();
+            if (speed > model.getMaxSpeed()) {
+                vel = vel.getNormalized().mul(model.getMaxSpeed());
             }
+        } finally {
+            lock.unlock();
         }
     }
 
     public void updatePos(JPFBoidsModel model) {
-        if(lock.tryLock()) {
-            try {
-                /* Update position */
+        /* Update position */
 
-                pos = pos.sum(vel);
+        pos = pos.sum(vel);
 
-                /* environment wrap-around */
+        /* environment wrap-around */
 
-                if (pos.x() < model.getMinX()) pos = pos.sum(new V2d(model.getWidth(), 0));
-                if (pos.x() >= model.getMaxX()) pos = pos.sum(new V2d(-model.getWidth(), 0));
-                if (pos.y() < model.getMinY()) pos = pos.sum(new V2d(0, model.getHeight()));
-                if (pos.y() >= model.getMaxY()) pos = pos.sum(new V2d(0, -model.getHeight()));
-            } finally {
-                lock.unlock();
-            }
-        }
+        if (pos.x() < model.getMinX()) pos = pos.sum(new V2d(model.getWidth(), 0));
+        if (pos.x() >= model.getMaxX()) pos = pos.sum(new V2d(-model.getWidth(), 0));
+        if (pos.y() < model.getMinY()) pos = pos.sum(new V2d(0, model.getHeight()));
+        if (pos.y() >= model.getMaxY()) pos = pos.sum(new V2d(0, -model.getHeight()));
     }
 }

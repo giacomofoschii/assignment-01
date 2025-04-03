@@ -2,6 +2,7 @@ package pcd.ass01.multithreading.jpftesting;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class JPFBoidsModel {
 
@@ -14,6 +15,7 @@ public class JPFBoidsModel {
     private final double maxSpeed;
     private final double perceptionRadius;
     private final double avoidRadius;
+    private final ReentrantLock lock;
     private final MockGenerator generator;
 
     public JPFBoidsModel(double initialSeparationWeight,
@@ -34,11 +36,12 @@ public class JPFBoidsModel {
         this.perceptionRadius = perceptionRadius;
         this.avoidRadius = avoidRadius;
         this.generator = generator;
+        this.lock = new ReentrantLock();
 
         boids = new ArrayList<>();
     }
 
-    public List<JPFBoid> getBoids(){
+    public synchronized List<JPFBoid> getBoids(){
         return boids;
     }
 
@@ -66,15 +69,15 @@ public class JPFBoidsModel {
         return height;
     }
 
-    public double getSeparationWeight() {
+    public synchronized double getSeparationWeight() {
         return separationWeight;
     }
 
-    public double getCohesionWeight() {
+    public synchronized double getCohesionWeight() {
         return cohesionWeight;
     }
 
-    public double getAlignmentWeight() {
+    public synchronized double getAlignmentWeight() {
         return alignmentWeight;
     }
 
@@ -97,7 +100,7 @@ public class JPFBoidsModel {
         for (int i = 0; i < boidsNumber; i++) {
             P2d pos = new P2d(-width/2 + generator.nextDouble() * width, -height/2 + generator.nextDouble() * height);
             V2d vel = new V2d(generator.nextDouble() * maxSpeed/2 - maxSpeed/4, generator.nextDouble() * maxSpeed/2 - maxSpeed/4);
-            boids.add(new JPFBoid(pos, vel));
+            boids.add(new JPFBoid(pos, vel, this.lock));
         }
     }
 }

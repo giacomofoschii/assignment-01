@@ -50,8 +50,7 @@ public class BoidThread extends Thread{
 
             try {
                 barrier.await(); //Wait all the boids to update their velocities
-            } catch (InterruptedException | BrokenBarrierException e) {
-                barrier.reset();
+            } catch (InterruptedException | BrokenBarrierException ignored) {
             }
 
             for (Boid boid : boids) {

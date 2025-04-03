@@ -1,16 +1,22 @@
 package pcd.ass01;
 
+import pcd.ass01.multithreading.jpftesting.JPFBoid;
+import pcd.ass01.multithreading.jpftesting.JPFBoidsModel;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class Boid {
 
     private P2d pos;
     private V2d vel;
+    private final ReentrantLock lock;
 
-    public Boid(P2d pos, V2d vel) {
+    public Boid(P2d pos, V2d vel, ReentrantLock lock) {
         this.pos = pos;
         this.vel = vel;
+        this.lock = lock;
     }
 
     public P2d getPos() {
@@ -22,30 +28,33 @@ public class Boid {
     }
 
     public void updateVelocity(BoidsModel model) {
-
         /* change velocity vector according to separation, alignment, cohesion */
 
         List<Boid> nearbyBoids = getNearbyBoids(model);
 
-        V2d separation = calculateSeparation(nearbyBoids, model);
-        V2d alignment = calculateAlignment(nearbyBoids);
-        V2d cohesion = calculateCohesion(nearbyBoids);
+        this.lock.lock();
+        try {
+            V2d separation = calculateSeparation(nearbyBoids, model);
+            V2d alignment = calculateAlignment(nearbyBoids);
+            V2d cohesion = calculateCohesion(nearbyBoids);
 
-        vel = vel.sum(alignment.mul(model.getAlignmentWeight()))
-                .sum(separation.mul(model.getSeparationWeight()))
-                .sum(cohesion.mul(model.getCohesionWeight()));
+            vel = vel.sum(alignment.mul(model.getAlignmentWeight()))
+                    .sum(separation.mul(model.getSeparationWeight()))
+                    .sum(cohesion.mul(model.getCohesionWeight()));
 
-        /* Limit speed to MAX_SPEED */
+            /* Limit speed to MAX_SPEED */
 
-        double speed = vel.abs();
+            double speed = vel.abs();
 
-        if (speed > model.getMaxSpeed()) {
-            vel = vel.getNormalized().mul(model.getMaxSpeed());
+            if (speed > model.getMaxSpeed()) {
+                vel = vel.getNormalized().mul(model.getMaxSpeed());
+            }
+        } finally {
+            lock.unlock();
         }
     }
 
     public void updatePos(BoidsModel model) {
-
         /* Update position */
 
         pos = pos.sum(vel);

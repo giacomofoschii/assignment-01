@@ -48,13 +48,6 @@ public class JPFBoidsController {
         while(true) {
             multiAdministrator.waitThreads();
             multiAdministrator.signalDone();
-            break;
-        }
-    }
-
-    public synchronized void stopSimulation() {
-        for (JPFBoidThread thread : threads) {
-            thread.interrupt();
         }
     }
 
