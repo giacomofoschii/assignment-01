@@ -3,7 +3,6 @@ package pcd.ass01.virtualthread;
 import pcd.ass01.Boid;
 
 import java.util.concurrent.BrokenBarrierException;
-import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
