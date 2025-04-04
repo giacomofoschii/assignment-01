@@ -10,6 +10,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class JPFBoidsController {
+    public static final int NUM_ITERATIONS = 1;
     private final JPFBoidsModel model;
     private final MultiAdministrator multiAdministrator;
     private final CustomCyclicBarrier barrier;
@@ -45,9 +46,11 @@ public class JPFBoidsController {
     public void runSimulation() {
         divideBoids();
         startThreads();
-        while(true) {
+        int counter = 0;
+        while(counter < NUM_ITERATIONS) {
             multiAdministrator.waitThreads();
             multiAdministrator.signalDone();
+            counter++;
         }
     }
 

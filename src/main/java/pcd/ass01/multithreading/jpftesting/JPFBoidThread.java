@@ -22,7 +22,8 @@ public class JPFBoidThread extends Thread{
 
     @Override
     public void run() {
-        while(true) {
+        int counter = 0;
+        while(counter < JPFBoidsController.NUM_ITERATIONS)  {
             for (JPFBoid boid : boids) {
                 boid.updateVelocity(model);
             }
@@ -38,6 +39,7 @@ public class JPFBoidThread extends Thread{
             }
 
             this.multiAdministrator.threadDone();
+            counter++;
         }
     }
 
