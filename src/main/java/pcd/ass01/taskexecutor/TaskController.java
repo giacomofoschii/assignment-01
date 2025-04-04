@@ -28,8 +28,7 @@ public class TaskController extends BoidsController {
                 while (paused) {
                     try {
                         wait();
-                    } catch (InterruptedException e) {
-                        Thread.currentThread().interrupt();
+                    } catch (InterruptedException ignored) {
                     }
                 }
             }
@@ -42,12 +41,12 @@ public class TaskController extends BoidsController {
                 this.executor.execute(new UpdateVelocityTask(velocityLatch, boids, model));
             }
 
+            updateView();
+
             CustomCountDownLatch positionLatch = new CustomCountDownLatchImpl(boidsList.size());
             for (List<Boid> boids : boidsList) {
                 this.executor.execute(new UpdatePositionTask(positionLatch, boids, model));
             }
-
-            updateView();
         }
     }
 
@@ -81,12 +80,11 @@ public class TaskController extends BoidsController {
     public void stopExecutor() {
         this.executor.shutdown();
         try {
-            if (!this.executor.awaitTermination(60, TimeUnit.SECONDS)) {
+            if (!this.executor.awaitTermination(3, TimeUnit.SECONDS)) {
                 this.executor.shutdownNow();
             }
         } catch (InterruptedException ex) {
             this.executor.shutdownNow();
-            Thread.currentThread().interrupt();
         }
     }
 

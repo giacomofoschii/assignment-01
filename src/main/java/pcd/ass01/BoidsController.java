@@ -77,8 +77,7 @@ public abstract class BoidsController {
             if (dtElapsed < frameRatePeriod) {
                 try {
                     Thread.sleep(frameRatePeriod - dtElapsed);
-                } catch (InterruptedException ex) {
-                    Thread.currentThread().interrupt();
+                } catch (InterruptedException ignored) {
                 }
                 framerate = FRAMERATE;
             } else {
