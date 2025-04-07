@@ -33,6 +33,7 @@ public class TaskController extends BoidsController {
                     }
                 }
             }
+            var t0 = System.currentTimeMillis();
             if (!running) {
                 break;
             }
@@ -44,7 +45,6 @@ public class TaskController extends BoidsController {
 
             this.waitFutures(this.futures);
             this.futures.clear();
-            updateView();
 
             boidsList.forEach(boids -> {
                 if (!running) return;
@@ -53,6 +53,8 @@ public class TaskController extends BoidsController {
 
             this.waitFutures(this.futures);
             this.futures.clear();
+
+            updateView(t0);
         }
     }
 

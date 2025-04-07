@@ -15,6 +15,7 @@ public class Constants {
     public final static int SCREEN_HEIGHT = 800;
 
     public static final int FRAMERATE = 60;
+    public static final int FRAMERATE_PERIOD =1000 / FRAMERATE;
 
     public static final int TASK_POOL_SIZE = 100;
 }

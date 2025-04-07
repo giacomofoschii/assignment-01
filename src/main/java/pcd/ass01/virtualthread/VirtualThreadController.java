@@ -40,11 +40,11 @@ public class VirtualThreadController extends BoidsController {
     public void runSimulation() {
         startThreads();
         while (running) {
+            var t0 = System.currentTimeMillis();
             virtualAdministrator.waitThreads();
-
-            updateView();
-
             virtualAdministrator.signalDone();
+
+            updateView(t0);
         }
     }
 

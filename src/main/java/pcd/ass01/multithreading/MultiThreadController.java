@@ -44,11 +44,11 @@ public class MultiThreadController extends BoidsController {
     public void runSimulation() {
         startThreads();
         while (running) {
+            var t0 = System.currentTimeMillis();
             multiAdministrator.waitThreads();
-
-            updateView();
-
             multiAdministrator.signalDone();
+
+            updateView(t0);
         }
     }
 
