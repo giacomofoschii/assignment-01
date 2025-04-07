@@ -15,7 +15,7 @@ public class TaskController extends BoidsController {
 
     public TaskController() {
         super();
-        this.executor = Executors.newFixedThreadPool(numThreads);
+        this.executor = Executors.newCachedThreadPool();
         this.boidsList = new ArrayList<>();
         this.futures = new ArrayList<>();
     }
@@ -61,7 +61,7 @@ public class TaskController extends BoidsController {
     @Override
     public void newSimulation() {
         this.running = true;
-        this.executor = Executors.newFixedThreadPool(numThreads);
+        this.executor = Executors.newCachedThreadPool();
         new Thread(this::runSimulation).start();
     }
 
