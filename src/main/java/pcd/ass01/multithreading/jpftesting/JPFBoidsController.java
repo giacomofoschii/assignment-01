@@ -10,7 +10,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class JPFBoidsController {
-    public static final int NUM_ITERATIONS = 1;
+    public static final int NUM_ITERATIONS = 3;
     private final JPFBoidsModel model;
     private final MultiAdministrator multiAdministrator;
     private final CustomCyclicBarrier barrier;
