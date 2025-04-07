@@ -43,7 +43,7 @@ public class TaskController extends BoidsController {
             });
 
 
-            this.waitFutures(this.futures);
+            this.waitFutures();
             this.futures.clear();
 
             boidsList.forEach(boids -> {
@@ -51,7 +51,7 @@ public class TaskController extends BoidsController {
                 this.futures.add(this.executor.submit(new UpdatePositionTask(boids, this.model)));
             });
 
-            this.waitFutures(this.futures);
+            this.waitFutures();
             this.futures.clear();
 
             updateView(t0);
@@ -94,8 +94,8 @@ public class TaskController extends BoidsController {
         this.boidsList = boidsList;
     }
 
-    private void waitFutures(List<Future<Void>> futures) {
-        futures.forEach(future -> {
+    private void waitFutures() {
+        this.futures.forEach(future -> {
             try {
                 future.get();
             } catch (InterruptedException | ExecutionException e) {
