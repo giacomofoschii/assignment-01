@@ -8,29 +8,33 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-public class MultithreadingController extends BoidsController {
+public class MultiThreadController extends BoidsController {
 
     private final MultiAdministrator multiAdministrator;
     private final CustomCyclicBarrier barrier;
     private final LinkedList<BoidThread> threads;
 
-    public MultithreadingController() {
+    public MultiThreadController() {
         super();
         this.threads = new LinkedList<>();
         this.multiAdministrator = new MultiAdministrator(numThreads);
         this.barrier = new CustomCyclicBarrierImpl(numThreads);
-
-        divideBoids();
     }
 
-    public void divideBoids() {
+    private List<Boid> getThreadPool(int threadIndex) {
+        List<Boid> boids = model.getBoids();
+        int poolSize = boids.size() / numThreads;
+        int start = threadIndex * poolSize;
+        int end = (threadIndex == numThreads - 1) ? boids.size() : start + poolSize;
+        return new ArrayList<>(boids.subList(start, end));
+    }
+
+    private void startThreads() {
+        if (!threads.isEmpty())
+            threads.clear();
         for (int i = 0; i < numThreads; i++) {
-            threads.add(new BoidThread(getThreadPool(i), this, barrier, multiAdministrator));
-        }
-    }
-
-    public void startThreads() {
-        for (BoidThread thread : threads) {
+            BoidThread thread = new BoidThread(getThreadPool(i), this, barrier, multiAdministrator);
+            threads.add(thread);
             thread.setStopped(false);
             thread.start();
         }
@@ -38,6 +42,7 @@ public class MultithreadingController extends BoidsController {
 
     @Override
     public void runSimulation() {
+        startThreads();
         while (running) {
             multiAdministrator.waitThreads();
 
@@ -78,14 +83,6 @@ public class MultithreadingController extends BoidsController {
 
     public boolean isPaused() {
         return paused;
-    }
-
-    private List<Boid> getThreadPool(int threadIndex) {
-        List<Boid> boids = model.getBoids();
-        int poolSize = boids.size() / numThreads;
-        int start = threadIndex * poolSize;
-        int end = (threadIndex == numThreads - 1) ? boids.size() : start + poolSize;
-        return new ArrayList<>(boids.subList(start, end));
     }
 
 }
