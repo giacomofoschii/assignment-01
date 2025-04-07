@@ -17,4 +17,8 @@ public class Constants {
     public static final int FRAMERATE = 60;
 
     public static final int TASK_POOL_SIZE = 100;
+
+    public static final String TASK_VERSION = "Task-Based (Java Executor Framework)";
+    public static final String MULTI_VERSION = "Multi-Threading";
+    public static final String VIRTUAL_VERSION = "Virtual-Threading";
 }
