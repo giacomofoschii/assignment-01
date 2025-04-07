@@ -2,31 +2,22 @@ package pcd.ass01.taskexecutor;
 
 import pcd.ass01.Boid;
 import pcd.ass01.BoidsModel;
-import pcd.ass01.utils.CustomCountDownLatch;
 
 import java.util.List;
 
 public class UpdatePositionTask implements UpdateTask {
 
-    private final CustomCountDownLatch latch;
     private final List<Boid> boids;
     private final BoidsModel model;
 
-    public UpdatePositionTask(CustomCountDownLatch latch, List<Boid> boids, BoidsModel model) {
-        this.latch = latch;
+    public UpdatePositionTask(final List<Boid> boids, final BoidsModel model) {
         this.boids = boids;
         this.model = model;
     }
 
     @Override
-    public void run() {
-        for(Boid boid : this.boids) {
-            boid.updatePos(model);
-        }
-        this.latch.countDown();
-        try {
-            this.latch.await();
-        } catch (InterruptedException ignored) {
-        }
+    public Void call() {
+        this.boids.forEach(boid -> boid.updatePos(this.model));
+        return null;
     }
 }

@@ -1,27 +1,28 @@
 package pcd.ass01.taskexecutor;
 
 import pcd.ass01.*;
-import pcd.ass01.utils.CustomCountDownLatch;
-import pcd.ass01.utils.CustomCountDownLatchImpl;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
+
+import static pcd.ass01.Constants.TASK_POOL_SIZE;
 
 public class TaskController extends BoidsController {
     private ExecutorService executor;
     private List<List<Boid>> boidsList;
+    private final List<Future<Void>> futures;
 
     public TaskController() {
         super();
         this.executor = Executors.newFixedThreadPool(numThreads);
+        this.boidsList = new ArrayList<>();
+        this.futures = new ArrayList<>();
     }
 
     @Override
     public void runSimulation() {
-        divideBoids(model.getBoids(), numThreads);
+        divideBoids(this.model.getBoids());
 
         while (running) {
             synchronized (this) {
@@ -35,18 +36,23 @@ public class TaskController extends BoidsController {
             if (!running) {
                 break;
             }
+            boidsList.forEach(boids -> {
+                if (!running) return;
+                this.futures.add(this.executor.submit(new UpdateVelocityTask(boids, this.model)));
+            });
 
-            CustomCountDownLatch velocityLatch = new CustomCountDownLatchImpl(boidsList.size());
-            for (List<Boid> boids : boidsList) {
-                this.executor.execute(new UpdateVelocityTask(velocityLatch, boids, model));
-            }
 
+            this.waitFutures(this.futures);
+            this.futures.clear();
             updateView();
 
-            CustomCountDownLatch positionLatch = new CustomCountDownLatchImpl(boidsList.size());
-            for (List<Boid> boids : boidsList) {
-                this.executor.execute(new UpdatePositionTask(positionLatch, boids, model));
-            }
+            boidsList.forEach(boids -> {
+                if (!running) return;
+                this.futures.add(this.executor.submit(new UpdatePositionTask(boids, this.model)));
+            });
+
+            this.waitFutures(this.futures);
+            this.futures.clear();
         }
     }
 
@@ -63,18 +69,37 @@ public class TaskController extends BoidsController {
         notify();
     }
 
-    private void divideBoids(List<Boid> boids, int activeThreads) {
+    @Override
+    public synchronized void stopSimulation() {
+        this.running = false;
+        this.paused = false;
+        notify();
+        stopExecutor();
+    }
+
+    private void divideBoids(List<Boid> boids) {
         List<List<Boid>> boidsList = new ArrayList<>();
-        int boidsPerThread = boids.size() / activeThreads;
-        int remainingBoids = boids.size() % activeThreads;
+        int numTask = Math.max(1, boids.size() / TASK_POOL_SIZE);
+        int boidsPerThread = boids.size() / numTask;
+        int remainingBoids = boids.size() % numTask;
 
         int startIndex = 0;
-        for (int i = 0; i < activeThreads; i++) {
+        for (int i = 0; i < numTask; i++) {
             int endIndex = startIndex + boidsPerThread + (i < remainingBoids ? 1 : 0);
             boidsList.add(boids.subList(startIndex, endIndex));
             startIndex = endIndex;
         }
         this.boidsList = boidsList;
+    }
+
+    private void waitFutures(List<Future<Void>> futures) {
+        futures.forEach(future -> {
+            try {
+                future.get();
+            } catch (InterruptedException | ExecutionException e) {
+                throw new RuntimeException(e);
+            }
+        });
     }
 
     public void stopExecutor() {
@@ -88,11 +113,4 @@ public class TaskController extends BoidsController {
         }
     }
 
-    @Override
-    public synchronized void stopSimulation() {
-        this.running = false;
-        this.paused = false;
-        notify();
-        stopExecutor();
-    }
 }
