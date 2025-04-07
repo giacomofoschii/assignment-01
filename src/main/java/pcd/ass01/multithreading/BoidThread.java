@@ -44,18 +44,14 @@ public class BoidThread extends Thread{
                 }
             }
 
-            for (Boid boid : boids) {
-                boid.updateVelocity(this.controller.getModel());
-            }
+            boids.forEach(boid -> boid.updateVelocity(this.controller.getModel()));
 
             try {
                 barrier.await(); //Wait all the boids to update their velocities
             } catch (InterruptedException | BrokenBarrierException ignored) {
             }
 
-            for (Boid boid : boids) {
-                boid.updatePos(this.controller.getModel());
-            }
+            boids.forEach(boid -> boid.updatePos(this.controller.getModel()));
 
             this.multiAdministrator.threadDone();
         }

@@ -73,9 +73,7 @@ public class MultithreadingController extends BoidsController {
     public synchronized void stopSimulation() {
         paused = false;
         running = false;
-        for (BoidThread thread : threads) {
-            thread.setStopped(true);
-        }
+        threads.forEach(thread -> thread.setStopped(true));
     }
 
     public boolean isPaused() {
