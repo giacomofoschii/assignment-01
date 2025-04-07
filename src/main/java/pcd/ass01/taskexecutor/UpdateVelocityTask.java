@@ -6,7 +6,7 @@ import pcd.ass01.utils.CustomCountDownLatch;
 
 import java.util.List;
 
-public class UpdateVelocityTask implements Runnable {
+public class UpdateVelocityTask implements UpdateTask {
     private final CustomCountDownLatch latch;
     private final List<Boid> boids;
     private final BoidsModel model;

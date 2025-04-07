@@ -6,7 +6,7 @@ import pcd.ass01.utils.CustomCountDownLatch;
 
 import java.util.List;
 
-public class UpdatePositionTask implements Runnable {
+public class UpdatePositionTask implements UpdateTask {
 
     private final CustomCountDownLatch latch;
     private final List<Boid> boids;
