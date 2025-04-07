@@ -11,13 +11,13 @@ public class BoidVirtualThread extends Thread{
     private final Boid boid;
     private final CustomCyclicBarrier barrier;
     private final VirtualAdministrator admin;
-    private final VirtualController controller;
+    private final VirtualThreadController controller;
     private volatile boolean stopped;
     private final ReentrantLock lock;
     private final Condition condition;
 
     public BoidVirtualThread(Boid boid, CustomCyclicBarrier barrier,
-                             VirtualAdministrator admin, VirtualController controller,
+                             VirtualAdministrator admin, VirtualThreadController controller,
                              ReentrantLock lock, Condition condition) {
         this.boid = boid;
         this.barrier = barrier;

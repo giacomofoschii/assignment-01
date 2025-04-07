@@ -10,7 +10,7 @@ import java.util.Queue;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
-public class VirtualController extends BoidsController {
+public class VirtualThreadController extends BoidsController {
 
     private final CustomCyclicBarrier barrier;
     private final Queue<BoidVirtualThread> threads;
@@ -18,7 +18,7 @@ public class VirtualController extends BoidsController {
     private final ReentrantLock lock;
     private final Condition condition;
 
-    public VirtualController() {
+    public VirtualThreadController() {
         super();
         this.barrier = new CustomCyclicBarrierImpl(numThreads);
         this.threads = new LinkedList<>();

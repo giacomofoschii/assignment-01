@@ -11,6 +11,7 @@ import java.util.List;
 
 public class JPFBoidsController {
     public static final int NUM_ITERATIONS = 3;
+    public static final int BOIDS_NUMBER = 5;
     private final JPFBoidsModel model;
     private final MultiAdministrator multiAdministrator;
     private final CustomCyclicBarrier barrier;
@@ -22,6 +23,7 @@ public class JPFBoidsController {
         this.model = new JPFBoidsModel(SEPARATION_WEIGHT, ALIGNMENT_WEIGHT,
                 COHESION_WEIGHT, ENVIRONMENT_WIDTH, ENVIRONMENT_HEIGHT,
                 MAX_SPEED, PERCEPTION_RADIUS, AVOID_RADIUS, new MockGenerator());
+        model.setBoidsNumber(BOIDS_NUMBER);
         this.threads = new LinkedList<>();
         this.multiAdministrator = new MultiAdministrator(numThreads);
         this.barrier = new CustomCyclicBarrierImpl(numThreads);
@@ -31,20 +33,17 @@ public class JPFBoidsController {
         return this.model;
     }
 
-    private void divideBoids() {
-        for (int i = 0; i < numThreads; i++) {
-            threads.add(new JPFBoidThread(getThreadPool(i), model, barrier, multiAdministrator));
-        }
-    }
-
     private void startThreads() {
-        for (JPFBoidThread thread : threads) {
+        if (!threads.isEmpty())
+            threads.clear();
+        for (int i = 0; i < numThreads; i++) {
+            JPFBoidThread thread = new JPFBoidThread(getThreadPool(i), this.model, barrier, multiAdministrator);
+            threads.add(thread);
             thread.start();
         }
     }
 
     public void runSimulation() {
-        divideBoids();
         startThreads();
         int counter = 0;
         while(counter < NUM_ITERATIONS) {

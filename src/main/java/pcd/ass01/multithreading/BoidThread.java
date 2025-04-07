@@ -8,12 +8,12 @@ import java.util.concurrent.BrokenBarrierException;
 
 public class BoidThread extends Thread{
     private List<Boid> boids;
-    private final MultithreadingController controller;
+    private final MultiThreadController controller;
     private final CustomCyclicBarrier barrier;
     private final MultiAdministrator multiAdministrator;
     private volatile boolean stopped;
 
-    public BoidThread(final List<Boid> boids, final MultithreadingController controller,
+    public BoidThread(final List<Boid> boids, final MultiThreadController controller,
                       final CustomCyclicBarrier barrier, final MultiAdministrator multiAdministrator) {
         assignPool(boids);
         this.controller = controller;
