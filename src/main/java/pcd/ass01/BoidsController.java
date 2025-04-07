@@ -65,18 +65,16 @@ public abstract class BoidsController {
      * calculating the time elapsed since the last update
      * and adjusting the framerate accordingly.
      */
-    public void updateView() {
-        var t0 = System.currentTimeMillis();
+    public void updateView(long t0) {
 
         if (this.view != null) {
             this.view.update(framerate);
             var t1 = System.currentTimeMillis();
             var dtElapsed = t1 - t0;
-            var frameRatePeriod = 1000 / FRAMERATE;
 
-            if (dtElapsed < frameRatePeriod) {
+            if (dtElapsed < FRAMERATE_PERIOD) {
                 try {
-                    Thread.sleep(frameRatePeriod - dtElapsed);
+                    Thread.sleep(FRAMERATE_PERIOD - dtElapsed);
                 } catch (InterruptedException ignored) {
                 }
                 framerate = FRAMERATE;

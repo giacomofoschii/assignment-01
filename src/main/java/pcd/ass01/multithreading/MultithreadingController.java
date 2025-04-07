@@ -39,11 +39,11 @@ public class MultithreadingController extends BoidsController {
     @Override
     public void runSimulation() {
         while (running) {
+            var t0 = System.currentTimeMillis();
             multiAdministrator.waitThreads();
-
-            updateView();
-
             multiAdministrator.signalDone();
+
+            updateView(t0);
         }
     }
 
