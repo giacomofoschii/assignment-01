@@ -1,33 +1,32 @@
 package pcd.ass01.utils;
 
-import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class CustomCyclicBarrierImpl implements CustomCyclicBarrier {
 
-    private final int waitingThreadNum;
-    private int arrivedThreadNum;
+    private final int totalThreads;
+    private int arrivedThreads;
     private final ReentrantLock lock;
     private final Condition condition;
 
-    public CustomCyclicBarrierImpl(int waitingThreadNum) {
-        this.waitingThreadNum = waitingThreadNum;
-        this.arrivedThreadNum = 0;
+    public CustomCyclicBarrierImpl(int totalThreads) {
+        this.totalThreads = totalThreads;
+        this.arrivedThreads = 0;
         this.lock = new ReentrantLock();
         this.condition = lock.newCondition();
     }
 
     @Override
-    public void await() throws InterruptedException, BrokenBarrierException {
+    public void await() throws InterruptedException {
         lock.lock();
         try {
-            arrivedThreadNum++;
+            arrivedThreads++;
 
-            if (arrivedThreadNum < waitingThreadNum) {
+            if (arrivedThreads < totalThreads) {
                 this.condition.await();
             } else {
-                arrivedThreadNum = 0;
+                arrivedThreads = 0;
                 this.condition.signalAll();
             }
         } finally {
@@ -39,7 +38,7 @@ public class CustomCyclicBarrierImpl implements CustomCyclicBarrier {
     public void reset() {
         lock.lock();
         try{
-            arrivedThreadNum = 0;
+            arrivedThreads = 0;
             this.condition.signalAll();
         } finally {
             lock.unlock();
