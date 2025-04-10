@@ -19,6 +19,7 @@ public class BoidThread extends Thread{
         this.controller = controller;
         this.barrier = barrier;
         this.multiAdministrator = multiAdministrator;
+        this.stopped = false;
     }
 
     public void assignPool(List<Boid> boids) {

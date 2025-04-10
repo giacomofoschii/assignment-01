@@ -30,13 +30,22 @@ public class MultiThreadController extends BoidsController {
     }
 
     private void startThreads() {
-        if (!threads.isEmpty())
-            threads.clear();
-        for (int i = 0; i < numThreads; i++) {
-            BoidThread thread = new BoidThread(getThreadPool(i), this, barrier, multiAdministrator);
-            threads.add(thread);
-            thread.setStopped(false);
-            thread.start();
+        if (threads.isEmpty()) {
+            for (int i = 0; i < numThreads; i++) {
+                BoidThread thread = new BoidThread(getThreadPool(i), this, barrier, multiAdministrator);
+                threads.add(thread);
+                thread.start();
+            }
+        } else {
+            for (int i = 0; i < numThreads; i++) {
+                if (!threads.get(i).isAlive()) {
+                    threads.set(i, new BoidThread(getThreadPool(i), this, barrier, multiAdministrator));
+                    threads.get(i).start();
+                } else {
+                    threads.get(i).assignPool(getThreadPool(i));
+                    threads.get(i).setStopped(false);
+                }
+            }
         }
     }
 
@@ -60,28 +69,19 @@ public class MultiThreadController extends BoidsController {
 
     @Override
     public synchronized void newSimulation() {
-        running = true;
-        for (int i = 0; i < numThreads; i++) {
-            if (!threads.get(i).isAlive()) {
-                threads.set(i, new BoidThread(getThreadPool(i), this, barrier, multiAdministrator));
-                threads.get(i).start();
-            } else {
-                threads.get(i).assignPool(getThreadPool(i));
-                threads.get(i).setStopped(false);
-            }
-        }
-        resumeSimulation();
+        this.running = true;
         new Thread(this::runSimulation).start();
     }
 
     @Override
     public synchronized void stopSimulation() {
-        paused = false;
-        running = false;
-        threads.forEach(thread -> thread.setStopped(true));
+        this.running = false;
+        this.paused = false;
+        notifyAll();
+        this.threads.forEach(thread -> thread.setStopped(true));
     }
 
     public boolean isPaused() {
-        return paused;
+        return this.paused;
     }
 }
